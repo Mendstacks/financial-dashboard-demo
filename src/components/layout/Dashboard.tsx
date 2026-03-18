@@ -23,6 +23,7 @@ export function Dashboard() {
   const layouts = usePortfolioStore((s) => s.layouts)
   const updateLayouts = usePortfolioStore((s) => s.updateLayouts)
   const poppedOutWidgets = usePortfolioStore((s) => s.poppedOutWidgets)
+  const visibleWidgets = usePortfolioStore((s) => s.visibleWidgets)
   const popOutWidget = usePortfolioStore((s) => s.popOutWidget)
   const popInWidget = usePortfolioStore((s) => s.popInWidget)
 
@@ -48,7 +49,9 @@ export function Dashboard() {
     allocation: <AllocationWidget allocation={portfolio.allocation} />,
   }
 
-  const gridWidgets = Object.entries(WIDGET_CONFIG).filter(([id]) => !isPoppedOut(id))
+  const gridWidgets = Object.entries(WIDGET_CONFIG).filter(
+    ([id]) => !isPoppedOut(id) && visibleWidgets.includes(id),
+  )
 
   return (
     <div ref={containerRef} className="flex-1">

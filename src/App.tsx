@@ -1,4 +1,5 @@
 import { PortfolioSelector } from './components/PortfolioSelector'
+import { WidgetManager } from './components/WidgetManager'
 import { Dashboard } from './components/layout/Dashboard'
 import { useMockRealtime } from './hooks/useMockRealtime'
 import { usePortfolioStore } from './store/usePortfolioStore'
@@ -30,6 +31,8 @@ function App() {
           </div>
           <div className="w-px h-5 bg-terminal-border" />
           <PortfolioSelector />
+          <div className="w-px h-5 bg-terminal-border" />
+          <WidgetManager />
           {portfolio && (
             <>
               <div className="w-px h-5 bg-terminal-border" />

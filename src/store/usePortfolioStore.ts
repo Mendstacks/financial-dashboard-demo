@@ -38,11 +38,13 @@ interface PortfolioState {
   selectedPortfolioId: string
   layouts: ResponsiveLayouts
   poppedOutWidgets: string[]
+  visibleWidgets: string[]
   selectPortfolio: (id: string) => void
   updatePortfolios: (portfolios: Portfolio[]) => void
   updateLayouts: (layouts: ResponsiveLayouts) => void
   popOutWidget: (id: string) => void
   popInWidget: (id: string) => void
+  toggleWidget: (id: string) => void
 }
 
 export const usePortfolioStore = create<PortfolioState>((set) => ({
@@ -50,6 +52,7 @@ export const usePortfolioStore = create<PortfolioState>((set) => ({
   selectedPortfolioId: mockPortfolios[0].id,
   layouts: loadLayouts(),
   poppedOutWidgets: [],
+  visibleWidgets: ['summary', 'news', 'allocation'],
   selectPortfolio: (id) => set({ selectedPortfolioId: id }),
   updatePortfolios: (portfolios) => set({ portfolios }),
   updateLayouts: (layouts) => {
@@ -65,5 +68,11 @@ export const usePortfolioStore = create<PortfolioState>((set) => ({
   popInWidget: (id) =>
     set((state) => ({
       poppedOutWidgets: state.poppedOutWidgets.filter((w) => w !== id),
+    })),
+  toggleWidget: (id) =>
+    set((state) => ({
+      visibleWidgets: state.visibleWidgets.includes(id)
+        ? state.visibleWidgets.filter((w) => w !== id)
+        : [...state.visibleWidgets, id],
     })),
 }))
