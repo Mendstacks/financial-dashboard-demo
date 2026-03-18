@@ -12,29 +12,32 @@ function timeAgo(timestamp: string): string {
   const diffHours = Math.floor(diffMins / 60)
   const diffDays = Math.floor(diffHours / 24)
 
-  if (diffDays > 0) return `${diffDays}d ago`
-  if (diffHours > 0) return `${diffHours}h ago`
-  if (diffMins > 0) return `${diffMins}m ago`
-  return 'just now'
+  if (diffDays > 0) return `${diffDays}d`
+  if (diffHours > 0) return `${diffHours}h`
+  if (diffMins > 0) return `${diffMins}m`
+  return 'now'
 }
 
 export function NewsWidget({ news }: NewsWidgetProps) {
   return (
-    <div className="flex flex-col gap-0.5 h-full">
+    <div className="flex flex-col h-full">
       {news.map((item, index) => (
         <div
           key={item.id}
-          className={`py-2 px-1 ${
-            index < news.length - 1 ? 'border-b border-terminal-border' : ''
+          className={`py-1.5 px-1 flex gap-2 hover:bg-terminal-border/20 rounded cursor-default ${
+            index < news.length - 1 ? 'border-b border-terminal-border/50' : ''
           }`}
         >
-          <div className="text-sm text-terminal-text leading-snug mb-1">
-            {item.headline}
-          </div>
-          <div className="flex items-center gap-2 text-xs text-terminal-muted">
-            <span className="font-medium text-terminal-orange">{item.source}</span>
-            <span>·</span>
-            <span>{timeAgo(item.timestamp)}</span>
+          <div className="w-1 rounded-full bg-terminal-blue shrink-0 mt-1" style={{ height: '12px' }} />
+          <div className="flex-1 min-w-0">
+            <div className="text-xs text-terminal-text leading-snug">
+              {item.headline}
+            </div>
+            <div className="flex items-center gap-1.5 text-[10px] text-terminal-muted mt-0.5">
+              <span className="font-medium text-terminal-orange">{item.source}</span>
+              <span className="text-terminal-border">|</span>
+              <span className="tabular-nums">{timeAgo(item.timestamp)}</span>
+            </div>
           </div>
         </div>
       ))}

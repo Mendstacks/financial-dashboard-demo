@@ -23,17 +23,28 @@ export function SummaryWidget({ summary }: SummaryWidgetProps) {
   const isPositive = summary.todayGainLoss >= 0
 
   return (
-    <div className="flex flex-col gap-3 h-full">
-      <div>
-        <div className="text-terminal-muted text-xs mb-1">Total Portfolio Value</div>
-        <div className="text-2xl font-semibold tabular-nums font-mono">
-          {formatCurrency(summary.totalValue)}
+    <div className="flex flex-col gap-2 h-full">
+      <div className="flex items-baseline justify-between">
+        <div>
+          <div className="text-terminal-muted text-[10px] uppercase tracking-wider mb-0.5">Total Value</div>
+          <div className="text-xl font-semibold tabular-nums font-mono">
+            {formatCurrency(summary.totalValue)}
+          </div>
+        </div>
+        <div
+          className={`text-xs font-bold px-2 py-0.5 rounded ${
+            isPositive
+              ? 'bg-terminal-green/10 text-terminal-green'
+              : 'bg-terminal-red/10 text-terminal-red'
+          }`}
+        >
+          {isPositive ? '▲' : '▼'} {formatPercent(summary.todayGainLossPercent)}
         </div>
       </div>
 
-      <div className="flex gap-4">
+      <div className="flex gap-6">
         <div>
-          <div className="text-terminal-muted text-xs mb-0.5">Today's P&L</div>
+          <div className="text-terminal-muted text-[10px] uppercase tracking-wider">P&L</div>
           <div
             className={`text-sm font-medium tabular-nums font-mono ${
               isPositive ? 'text-terminal-green' : 'text-terminal-red'
@@ -43,19 +54,9 @@ export function SummaryWidget({ summary }: SummaryWidgetProps) {
             {formatCurrency(summary.todayGainLoss)}
           </div>
         </div>
-        <div>
-          <div className="text-terminal-muted text-xs mb-0.5">Change</div>
-          <div
-            className={`text-sm font-medium tabular-nums font-mono ${
-              isPositive ? 'text-terminal-green' : 'text-terminal-red'
-            }`}
-          >
-            {formatPercent(summary.todayGainLossPercent)}
-          </div>
-        </div>
       </div>
 
-      <div className="flex-1 min-h-[120px]">
+      <div className="flex-1 min-h-[120px] -mx-1">
         <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
           <LineChart data={summary.performanceData}>
             <YAxis domain={['dataMin', 'dataMax']} hide />
@@ -65,10 +66,11 @@ export function SummaryWidget({ summary }: SummaryWidgetProps) {
                 border: '1px solid #1e2a3a',
                 borderRadius: '4px',
                 color: '#e1e7ef',
-                fontSize: '12px',
+                fontSize: '11px',
+                padding: '6px 10px',
               }}
               formatter={(value) => [formatCurrency(Number(value)), 'Value']}
-              labelFormatter={(label) => `Date: ${label}`}
+              labelFormatter={(label) => `${label}`}
             />
             <Line
               type="monotone"

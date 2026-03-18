@@ -1,60 +1,65 @@
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts'
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
 import type { Allocation } from '../../types/portfolio'
 
 interface AllocationWidgetProps {
   allocation: Allocation
 }
 
-const COLORS: Record<string, string> = {
-  Stocks: '#3b82f6',
-  Bonds: '#f59e0b',
-  Cash: '#00d26a',
-}
+const SEGMENTS = [
+  { key: 'stocks' as const, label: 'Stocks', color: '#3b82f6' },
+  { key: 'bonds' as const, label: 'Bonds', color: '#f59e0b' },
+  { key: 'cash' as const, label: 'Cash', color: '#00d26a' },
+]
 
 export function AllocationWidget({ allocation }: AllocationWidgetProps) {
-  const data = [
-    { name: 'Stocks', value: allocation.stocks },
-    { name: 'Bonds', value: allocation.bonds },
-    { name: 'Cash', value: allocation.cash },
-  ]
+  const data = SEGMENTS.map((s) => ({
+    name: s.label,
+    value: allocation[s.key],
+    color: s.color,
+  }))
 
   return (
     <div className="h-full flex flex-col min-h-[180px]">
-      <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
-        <PieChart>
-          <Pie
-            data={data}
-            cx="50%"
-            cy="45%"
-            innerRadius="40%"
-            outerRadius="70%"
-            dataKey="value"
-            stroke="#0a0e17"
-            strokeWidth={2}
-          >
-            {data.map((entry) => (
-              <Cell key={entry.name} fill={COLORS[entry.name]} />
-            ))}
-          </Pie>
-          <Tooltip
-            contentStyle={{
-              backgroundColor: '#131926',
-              border: '1px solid #1e2a3a',
-              borderRadius: '4px',
-              color: '#e1e7ef',
-              fontSize: '12px',
-            }}
-            formatter={(value) => [`${value}%`, '']}
-          />
-          <Legend
-            verticalAlign="bottom"
-            height={30}
-            formatter={(value: string) => (
-              <span className="text-xs text-terminal-text">{value}</span>
-            )}
-          />
-        </PieChart>
-      </ResponsiveContainer>
+      <div className="flex-1">
+        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
+          <PieChart>
+            <Pie
+              data={data}
+              cx="50%"
+              cy="50%"
+              innerRadius="45%"
+              outerRadius="75%"
+              dataKey="value"
+              stroke="#0a0e17"
+              strokeWidth={2}
+            >
+              {data.map((entry) => (
+                <Cell key={entry.name} fill={entry.color} />
+              ))}
+            </Pie>
+            <Tooltip
+              contentStyle={{
+                backgroundColor: '#131926',
+                border: '1px solid #1e2a3a',
+                borderRadius: '4px',
+                color: '#e1e7ef',
+                fontSize: '11px',
+                padding: '6px 10px',
+              }}
+              formatter={(value) => [`${value}%`, '']}
+            />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
+      <div className="flex justify-center gap-4 pt-1">
+        {data.map((item) => (
+          <div key={item.name} className="flex items-center gap-1.5">
+            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
+            <span className="text-[10px] text-terminal-muted">{item.name}</span>
+            <span className="text-[10px] font-medium tabular-nums font-mono text-terminal-text">{item.value}%</span>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
