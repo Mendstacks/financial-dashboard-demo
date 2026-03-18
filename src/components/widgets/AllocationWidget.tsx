@@ -19,8 +19,8 @@ export function AllocationWidget({ allocation }: AllocationWidgetProps) {
   ]
 
   return (
-    <div className="h-full flex flex-col">
-      <ResponsiveContainer width="100%" height="100%">
+    <div className="h-full flex flex-col min-h-[180px]">
+      <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
         <PieChart>
           <Pie
             data={data}

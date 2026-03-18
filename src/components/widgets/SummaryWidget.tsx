@@ -55,8 +55,8 @@ export function SummaryWidget({ summary }: SummaryWidgetProps) {
         </div>
       </div>
 
-      <div className="flex-1 min-h-0">
-        <ResponsiveContainer width="100%" height="100%">
+      <div className="flex-1 min-h-[120px]">
+        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
           <LineChart data={summary.performanceData}>
             <YAxis domain={['dataMin', 'dataMax']} hide />
             <Tooltip
