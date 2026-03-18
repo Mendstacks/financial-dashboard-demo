@@ -10,6 +10,7 @@ import { SummaryWidget } from '../widgets/SummaryWidget'
 import { NewsWidget } from '../widgets/NewsWidget'
 import { AllocationWidget } from '../widgets/AllocationWidget'
 import { SummarySkeleton, NewsSkeleton, AllocationSkeleton } from '../ui/Skeleton'
+import { ErrorBoundary } from '../ui/ErrorBoundary'
 
 const WIDGET_CONFIG = {
   summary: { title: 'Portfolio Summary', accent: '#3b82f6' },
@@ -89,7 +90,9 @@ export function Dashboard() {
                 accentColor={config.accent}
                 onPopOut={handlePopOut(id)}
               >
-                {widgets[id]}
+                <ErrorBoundary fallbackTitle={`${config.title} error`}>
+                  {widgets[id]}
+                </ErrorBoundary>
               </WidgetContainer>
             </div>
           ))}
