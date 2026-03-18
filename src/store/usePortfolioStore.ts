@@ -39,9 +39,11 @@ interface PortfolioState {
   layouts: ResponsiveLayouts
   poppedOutWidgets: string[]
   visibleWidgets: string[]
+  isLoading: boolean
   selectPortfolio: (id: string) => void
   updatePortfolios: (portfolios: Portfolio[]) => void
   updateLayouts: (layouts: ResponsiveLayouts) => void
+  setLoading: (loading: boolean) => void
   popOutWidget: (id: string) => void
   popInWidget: (id: string) => void
   toggleWidget: (id: string) => void
@@ -53,12 +55,14 @@ export const usePortfolioStore = create<PortfolioState>((set) => ({
   layouts: loadLayouts(),
   poppedOutWidgets: [],
   visibleWidgets: ['summary', 'news', 'allocation'],
+  isLoading: true,
   selectPortfolio: (id) => set({ selectedPortfolioId: id }),
   updatePortfolios: (portfolios) => set({ portfolios }),
   updateLayouts: (layouts) => {
     localStorage.setItem(LAYOUTS_STORAGE_KEY, JSON.stringify(layouts))
     set({ layouts })
   },
+  setLoading: (loading) => set({ isLoading: loading }),
   popOutWidget: (id) =>
     set((state) =>
       state.poppedOutWidgets.includes(id)

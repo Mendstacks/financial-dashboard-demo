@@ -9,6 +9,7 @@ import { PopoutWindow } from './PopoutWindow'
 import { SummaryWidget } from '../widgets/SummaryWidget'
 import { NewsWidget } from '../widgets/NewsWidget'
 import { AllocationWidget } from '../widgets/AllocationWidget'
+import { SummarySkeleton, NewsSkeleton, AllocationSkeleton } from '../ui/Skeleton'
 
 const WIDGET_CONFIG = {
   summary: { title: 'Portfolio Summary', accent: '#3b82f6' },
@@ -22,6 +23,7 @@ export function Dashboard() {
   const selectedId = usePortfolioStore((s) => s.selectedPortfolioId)
   const layouts = usePortfolioStore((s) => s.layouts)
   const updateLayouts = usePortfolioStore((s) => s.updateLayouts)
+  const isLoading = usePortfolioStore((s) => s.isLoading)
   const poppedOutWidgets = usePortfolioStore((s) => s.poppedOutWidgets)
   const visibleWidgets = usePortfolioStore((s) => s.visibleWidgets)
   const popOutWidget = usePortfolioStore((s) => s.popOutWidget)
@@ -44,9 +46,9 @@ export function Dashboard() {
   const isPoppedOut = (id: string) => poppedOutWidgets.includes(id)
 
   const widgets: Record<string, ReactNode> = {
-    summary: <SummaryWidget summary={portfolio.summary} />,
-    news: <NewsWidget news={portfolio.news} />,
-    allocation: <AllocationWidget allocation={portfolio.allocation} />,
+    summary: isLoading ? <SummarySkeleton /> : <SummaryWidget summary={portfolio.summary} />,
+    news: isLoading ? <NewsSkeleton /> : <NewsWidget news={portfolio.news} />,
+    allocation: isLoading ? <AllocationSkeleton /> : <AllocationWidget allocation={portfolio.allocation} />,
   }
 
   const gridWidgets = Object.entries(WIDGET_CONFIG).filter(

@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { PortfolioSelector } from './components/PortfolioSelector'
 import { WidgetManager } from './components/WidgetManager'
 import { Dashboard } from './components/layout/Dashboard'
@@ -12,6 +13,12 @@ function formatCompactCurrency(value: number): string {
 
 function App() {
   useMockRealtime()
+  const setLoading = usePortfolioStore((s) => s.setLoading)
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1500)
+    return () => clearTimeout(timer)
+  }, [setLoading])
 
   const portfolios = usePortfolioStore((s) => s.portfolios)
   const selectedId = usePortfolioStore((s) => s.selectedPortfolioId)
