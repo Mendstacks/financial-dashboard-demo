@@ -2,6 +2,9 @@
   "name": "financial-dashboard",
   "private": true,
   "version": "0.1.0",
+  "description": "Bloomberg-style multi-portfolio management dashboard",
+  "author": "HedgeSPA <dev@hedgespa.com>",
+  "homepage": "https://hedgespa.com",
   "main": "dist-electron/main.js",
   "type": "module",
   "scripts": {

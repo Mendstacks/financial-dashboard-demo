@@ -67,8 +67,8 @@ export function SummaryWidget({ summary }: SummaryWidgetProps) {
                 color: '#e1e7ef',
                 fontSize: '12px',
               }}
-              formatter={(value: number) => [formatCurrency(value), 'Value']}
-              labelFormatter={(label: string) => `Date: ${label}`}
+              formatter={(value) => [formatCurrency(Number(value)), 'Value']}
+              labelFormatter={(label) => `Date: ${label}`}
             />
             <Line
               type="monotone"

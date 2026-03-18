@@ -1,11 +1,11 @@
 import { create } from 'zustand'
 import type { Portfolio } from '../types/portfolio'
 import { mockPortfolios } from '../data/mockData'
-import type { Layouts } from 'react-grid-layout'
+import type { ResponsiveLayouts } from 'react-grid-layout'
 
 const LAYOUTS_STORAGE_KEY = 'financial-dashboard-layouts'
 
-const defaultLayouts: Layouts = {
+const defaultLayouts: ResponsiveLayouts = {
   lg: [
     { i: 'summary', x: 0, y: 0, w: 6, h: 3 },
     { i: 'news', x: 6, y: 0, w: 6, h: 3 },
@@ -23,7 +23,7 @@ const defaultLayouts: Layouts = {
   ],
 }
 
-function loadLayouts(): Layouts {
+function loadLayouts(): ResponsiveLayouts {
   try {
     const stored = localStorage.getItem(LAYOUTS_STORAGE_KEY)
     if (stored) return JSON.parse(stored)
@@ -36,10 +36,10 @@ function loadLayouts(): Layouts {
 interface PortfolioState {
   portfolios: Portfolio[]
   selectedPortfolioId: string
-  layouts: Layouts
+  layouts: ResponsiveLayouts
   selectPortfolio: (id: string) => void
   updatePortfolios: (portfolios: Portfolio[]) => void
-  updateLayouts: (layouts: Layouts) => void
+  updateLayouts: (layouts: ResponsiveLayouts) => void
 }
 
 export const usePortfolioStore = create<PortfolioState>((set) => ({

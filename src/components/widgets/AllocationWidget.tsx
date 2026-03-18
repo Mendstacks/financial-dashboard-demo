@@ -44,7 +44,7 @@ export function AllocationWidget({ allocation }: AllocationWidgetProps) {
               color: '#e1e7ef',
               fontSize: '12px',
             }}
-            formatter={(value: number) => [`${value}%`, '']}
+            formatter={(value) => [`${value}%`, '']}
           />
           <Legend
             verticalAlign="bottom"
