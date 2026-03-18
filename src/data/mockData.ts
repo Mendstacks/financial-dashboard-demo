@@ -19,6 +19,24 @@ function generatePerformanceData(baseValue: number, days: number): PerformancePo
   return data
 }
 
+export const extraNewsPool = [
+  { headline: 'S&P 500 hits new all-time high on broad market rally', source: 'Bloomberg' },
+  { headline: 'China GDP growth exceeds expectations at 5.2% for Q1', source: 'Reuters' },
+  { headline: 'Goldman Sachs raises year-end target for global equities', source: 'CNBC' },
+  { headline: 'Semiconductor stocks lead Nasdaq higher on AI chip demand', source: 'WSJ' },
+  { headline: 'Bank of Japan maintains ultra-loose monetary policy stance', source: 'Financial Times' },
+  { headline: 'US jobless claims fall to lowest level since February', source: 'Bloomberg' },
+  { headline: 'Copper prices surge 4% on renewed infrastructure spending', source: 'Reuters' },
+  { headline: 'ESG fund inflows reach record $3.8B in single week', source: 'Barrons' },
+  { headline: 'Dollar weakens against major currencies on rate cut bets', source: 'CNBC' },
+  { headline: 'Private equity deals hit 6-month high across APAC region', source: 'Financial Times' },
+  { headline: 'Natural gas futures drop 8% on warmer weather forecasts', source: 'Bloomberg' },
+  { headline: 'India central bank holds rates, signals growth optimism', source: 'Reuters' },
+  { headline: 'Crypto markets stabilize as institutional inflows resume', source: 'WSJ' },
+  { headline: 'Australian dollar rallies on strong employment data', source: 'CNBC' },
+  { headline: 'EU regulators approve new green bond framework standards', source: 'Financial Times' },
+]
+
 export const mockPortfolios: Portfolio[] = [
   {
     id: 'portfolio-1',
