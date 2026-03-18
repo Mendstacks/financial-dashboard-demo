@@ -26,6 +26,24 @@ function createWindow() {
     },
   })
 
+  // Allow pop-out widget windows opened via window.open()
+  mainWindow.webContents.setWindowOpenHandler(({ frameName }) => {
+    return {
+      action: 'allow',
+      overrideBrowserWindowOptions: {
+        width: 620,
+        height: 470,
+        title: frameName || 'Widget',
+        backgroundColor: '#0a0e17',
+        autoHideMenuBar: true,
+        webPreferences: {
+          contextIsolation: true,
+          nodeIntegration: false,
+        },
+      },
+    }
+  })
+
   if (process.env.VITE_DEV_SERVER_URL) {
     mainWindow.loadURL(process.env.VITE_DEV_SERVER_URL)
   } else {

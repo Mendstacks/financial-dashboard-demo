@@ -1,9 +1,11 @@
+import { useCallback, type ReactNode } from 'react'
 import { Responsive, useContainerWidth } from 'react-grid-layout'
 import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
 
 import { usePortfolioStore } from '../../store/usePortfolioStore'
 import { WidgetContainer } from './WidgetContainer'
+import { PopoutWindow } from './PopoutWindow'
 import { SummaryWidget } from '../widgets/SummaryWidget'
 import { NewsWidget } from '../widgets/NewsWidget'
 import { AllocationWidget } from '../widgets/AllocationWidget'
@@ -20,13 +22,47 @@ export function Dashboard() {
   const selectedId = usePortfolioStore((s) => s.selectedPortfolioId)
   const layouts = usePortfolioStore((s) => s.layouts)
   const updateLayouts = usePortfolioStore((s) => s.updateLayouts)
+  const poppedOutWidgets = usePortfolioStore((s) => s.poppedOutWidgets)
+  const popOutWidget = usePortfolioStore((s) => s.popOutWidget)
+  const popInWidget = usePortfolioStore((s) => s.popInWidget)
 
   const portfolio = portfolios.find((p) => p.id === selectedId)
 
+  const handlePopIn = useCallback(
+    (id: string) => () => popInWidget(id),
+    [popInWidget],
+  )
+
+  const handlePopOut = useCallback(
+    (id: string) => () => popOutWidget(id),
+    [popOutWidget],
+  )
+
   if (!portfolio) return null
+
+  const isPoppedOut = (id: string) => poppedOutWidgets.includes(id)
+
+  const widgets: Record<string, ReactNode> = {
+    summary: <SummaryWidget summary={portfolio.summary} />,
+    news: <NewsWidget news={portfolio.news} />,
+    allocation: <AllocationWidget allocation={portfolio.allocation} />,
+  }
+
+  const gridWidgets = Object.entries(WIDGET_CONFIG).filter(([id]) => !isPoppedOut(id))
 
   return (
     <div ref={containerRef} className="flex-1">
+      {/* Popped-out windows */}
+      {Object.entries(WIDGET_CONFIG).map(
+        ([id, config]) =>
+          isPoppedOut(id) && (
+            <PopoutWindow key={id} title={config.title} onClose={handlePopIn(id)}>
+              {widgets[id]}
+            </PopoutWindow>
+          ),
+      )}
+
+      {/* In-grid widgets */}
       {mounted && (
         <Responsive
           width={width}
@@ -41,21 +77,17 @@ export function Dashboard() {
             updateLayouts(allLayouts)
           }}
         >
-          <div key="summary">
-            <WidgetContainer title={WIDGET_CONFIG.summary.title} accentColor={WIDGET_CONFIG.summary.accent}>
-              <SummaryWidget summary={portfolio.summary} />
-            </WidgetContainer>
-          </div>
-          <div key="news">
-            <WidgetContainer title={WIDGET_CONFIG.news.title} accentColor={WIDGET_CONFIG.news.accent}>
-              <NewsWidget news={portfolio.news} />
-            </WidgetContainer>
-          </div>
-          <div key="allocation">
-            <WidgetContainer title={WIDGET_CONFIG.allocation.title} accentColor={WIDGET_CONFIG.allocation.accent}>
-              <AllocationWidget allocation={portfolio.allocation} />
-            </WidgetContainer>
-          </div>
+          {gridWidgets.map(([id, config]) => (
+            <div key={id}>
+              <WidgetContainer
+                title={config.title}
+                accentColor={config.accent}
+                onPopOut={handlePopOut(id)}
+              >
+                {widgets[id]}
+              </WidgetContainer>
+            </div>
+          ))}
         </Responsive>
       )}
     </div>

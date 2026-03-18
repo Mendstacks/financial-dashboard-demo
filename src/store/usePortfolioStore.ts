@@ -37,19 +37,33 @@ interface PortfolioState {
   portfolios: Portfolio[]
   selectedPortfolioId: string
   layouts: ResponsiveLayouts
+  poppedOutWidgets: string[]
   selectPortfolio: (id: string) => void
   updatePortfolios: (portfolios: Portfolio[]) => void
   updateLayouts: (layouts: ResponsiveLayouts) => void
+  popOutWidget: (id: string) => void
+  popInWidget: (id: string) => void
 }
 
 export const usePortfolioStore = create<PortfolioState>((set) => ({
   portfolios: mockPortfolios,
   selectedPortfolioId: mockPortfolios[0].id,
   layouts: loadLayouts(),
+  poppedOutWidgets: [],
   selectPortfolio: (id) => set({ selectedPortfolioId: id }),
   updatePortfolios: (portfolios) => set({ portfolios }),
   updateLayouts: (layouts) => {
     localStorage.setItem(LAYOUTS_STORAGE_KEY, JSON.stringify(layouts))
     set({ layouts })
   },
+  popOutWidget: (id) =>
+    set((state) =>
+      state.poppedOutWidgets.includes(id)
+        ? state
+        : { poppedOutWidgets: [...state.poppedOutWidgets, id] },
+    ),
+  popInWidget: (id) =>
+    set((state) => ({
+      poppedOutWidgets: state.poppedOutWidgets.filter((w) => w !== id),
+    })),
 }))
