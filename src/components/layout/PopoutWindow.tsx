@@ -13,8 +13,13 @@ export function PopoutWindow({ title, children, onClose, width = 600, height = 4
   const [container, setContainer] = useState<HTMLDivElement | null>(null)
   const windowRef = useRef<Window | null>(null)
   const unmountedRef = useRef(false)
+  const onCloseRef = useRef(onClose)
+  onCloseRef.current = onClose
 
   useEffect(() => {
+    // Already have a window open — don't recreate
+    if (windowRef.current && !windowRef.current.closed) return
+
     unmountedRef.current = false
 
     const left = window.screenX + (window.outerWidth - width) / 2
@@ -27,13 +32,12 @@ export function PopoutWindow({ title, children, onClose, width = 600, height = 4
     )
 
     if (!popup) {
-      onClose()
+      onCloseRef.current()
       return
     }
 
     windowRef.current = popup
 
-    // Write a basic HTML document to the popup to prevent navigation issues
     popup.document.open()
     popup.document.write(`
       <!DOCTYPE html>
@@ -47,7 +51,6 @@ export function PopoutWindow({ title, children, onClose, width = 600, height = 4
     `)
     popup.document.close()
 
-    // Copy stylesheets from parent window
     const parentStyles = document.querySelectorAll('link[rel="stylesheet"], style')
     parentStyles.forEach((node) => {
       popup.document.head.appendChild(node.cloneNode(true))
@@ -56,12 +59,12 @@ export function PopoutWindow({ title, children, onClose, width = 600, height = 4
     const div = popup.document.getElementById('popout-root') as HTMLDivElement
     setContainer(div)
 
-    // Use interval to detect window close — more reliable than beforeunload
     const pollInterval = setInterval(() => {
       if (popup.closed && !unmountedRef.current) {
         unmountedRef.current = true
         clearInterval(pollInterval)
-        onClose()
+        windowRef.current = null
+        onCloseRef.current()
       }
     }, 500)
 
@@ -71,9 +74,12 @@ export function PopoutWindow({ title, children, onClose, width = 600, height = 4
       if (windowRef.current && !windowRef.current.closed) {
         windowRef.current.close()
       }
+      windowRef.current = null
       setContainer(null)
     }
-  }, [title, width, height, onClose])
+  // Only recreate window if title changes — not on every render
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [title])
 
   if (!container) return null
 
