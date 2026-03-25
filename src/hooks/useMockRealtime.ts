@@ -21,20 +21,15 @@ export function useMockRealtime(intervalMs: number = 7000) {
           const newPrice = Math.round((h.lastPrice + priceChange) * 100) / 100
           const newPosition = Math.round(h.contract * newPrice * 100) / 100
           const newPnl = Math.round((newPrice - h.averagePrice) * h.contract * 100) / 100
-          const newPnlPercent = h.averagePrice !== 0
-            ? Math.round(((newPrice - h.averagePrice) / h.averagePrice) * 10000) / 10000
-            : 0
+          const newPnlPercent =
+            h.averagePrice !== 0 ? Math.round(((newPrice - h.averagePrice) / h.averagePrice) * 10000) / 10000 : 0
           return { ...h, lastPrice: newPrice, position: newPosition, pnl: newPnl, pnlPercent: newPnlPercent }
         })
 
         // Recompute portfolio-level values
         const totalValue = updatedHoldings.reduce((sum, h) => sum + h.position, 0)
-        const todayGainLoss = updatedHoldings
-          .filter((h) => h.assetClass !== 'Cash')
-          .reduce((sum, h) => sum + h.pnl, 0)
-        const todayGainLossPercent = totalValue > 0
-          ? (todayGainLoss / (totalValue - todayGainLoss)) * 100
-          : 0
+        const todayGainLoss = updatedHoldings.filter((h) => h.assetClass !== 'Cash').reduce((sum, h) => sum + h.pnl, 0)
+        const todayGainLossPercent = totalValue > 0 ? (todayGainLoss / (totalValue - todayGainLoss)) * 100 : 0
 
         // Recompute weights
         const holdingsWithWeights = updatedHoldings.map((h) => ({
@@ -43,8 +38,12 @@ export function useMockRealtime(intervalMs: number = 7000) {
         }))
 
         // Recompute allocation
-        const equityWeight = holdingsWithWeights.filter((h) => h.assetClass === 'Equity').reduce((s, h) => s + h.weight, 0)
-        const bondWeight = holdingsWithWeights.filter((h) => h.assetClass === 'Fixed Income').reduce((s, h) => s + h.weight, 0)
+        const equityWeight = holdingsWithWeights
+          .filter((h) => h.assetClass === 'Equity')
+          .reduce((s, h) => s + h.weight, 0)
+        const bondWeight = holdingsWithWeights
+          .filter((h) => h.assetClass === 'Fixed Income')
+          .reduce((s, h) => s + h.weight, 0)
         const cashWeight = holdingsWithWeights.filter((h) => h.assetClass === 'Cash').reduce((s, h) => s + h.weight, 0)
 
         // Rotate news (30% chance)

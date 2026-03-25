@@ -102,10 +102,7 @@ function injectWidgetIntoLayouts(
     const ref = savedItem ?? getDefaultItemForWidget(id)
     const cols = BREAKPOINT_COLS[bp] ?? 12
     const { x, y } = findAvailablePosition(filtered, ref.w, ref.h, cols)
-    result[bp] = [
-      ...filtered,
-      { i: id, x, y, w: ref.w, h: ref.h, minW, minH },
-    ]
+    result[bp] = [...filtered, { i: id, x, y, w: ref.w, h: ref.h, minW, minH }]
   }
   return result
 }
@@ -214,9 +211,7 @@ export const usePortfolioStore = create<PortfolioState>((set) => ({
     set((state) => {
       const savedItem = state.savedWidgetItems[id] ?? null
       const newLayouts = injectWidgetIntoLayouts(state.layouts, id, savedItem)
-      const remainingSaved = Object.fromEntries(
-        Object.entries(state.savedWidgetItems).filter(([key]) => key !== id),
-      )
+      const remainingSaved = Object.fromEntries(Object.entries(state.savedWidgetItems).filter(([key]) => key !== id))
 
       localStorage.setItem(layoutsKey(state.userType), JSON.stringify(newLayouts))
       return {

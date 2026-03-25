@@ -24,9 +24,7 @@ export const SummaryWidget = memo(function SummaryWidget({ summary, holdings, cu
         </div>
         <div
           className={`text-xs font-bold px-2 py-0.5 rounded ${
-            isPositive
-              ? 'bg-terminal-green/10 text-terminal-green'
-              : 'bg-terminal-red/10 text-terminal-red'
+            isPositive ? 'bg-terminal-green/10 text-terminal-green' : 'bg-terminal-red/10 text-terminal-red'
           }`}
         >
           {isPositive ? '▲' : '▼'} {formatPercent(summary.todayGainLossPercent)}

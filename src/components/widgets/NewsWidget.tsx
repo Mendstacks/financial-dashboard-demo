@@ -29,15 +29,18 @@ export const NewsWidget = memo(function NewsWidget({ news }: NewsWidgetProps) {
             index < news.length - 1 ? 'border-b border-terminal-border/50' : ''
           }`}
         >
-          <div className={`w-1 rounded-full shrink-0 mt-1 ${
-            item.sentiment === 'positive' ? 'bg-terminal-green' :
-            item.sentiment === 'negative' ? 'bg-terminal-red' :
-            'bg-terminal-muted'
-          }`} style={{ height: '12px' }} />
+          <div
+            className={`w-1 rounded-full shrink-0 mt-1 ${
+              item.sentiment === 'positive'
+                ? 'bg-terminal-green'
+                : item.sentiment === 'negative'
+                  ? 'bg-terminal-red'
+                  : 'bg-terminal-muted'
+            }`}
+            style={{ height: '12px' }}
+          />
           <div className="flex-1 min-w-0">
-            <div className="text-xs text-terminal-text leading-snug">
-              {item.headline}
-            </div>
+            <div className="text-xs text-terminal-text leading-snug">{item.headline}</div>
             <div className="flex items-center gap-1.5 text-[10px] text-terminal-muted mt-0.5">
               <span className="font-medium text-terminal-orange">{item.source}</span>
               <span className="text-terminal-border">|</span>

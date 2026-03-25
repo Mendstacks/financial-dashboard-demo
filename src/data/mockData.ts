@@ -31,9 +31,7 @@ function transformToPortfolios(): Portfolio[] {
       })
 
     const totalValue = holdings.reduce((sum, h) => sum + h.position, 0)
-    const todayGainLoss = holdings
-      .filter((h) => h.assetClass !== 'Cash')
-      .reduce((sum, h) => sum + h.pnl, 0)
+    const todayGainLoss = holdings.filter((h) => h.assetClass !== 'Cash').reduce((sum, h) => sum + h.pnl, 0)
     const todayGainLossPercent = totalValue > 0 ? (todayGainLoss / (totalValue - todayGainLoss)) * 100 : 0
 
     // Derive allocation from holdings by assetClass
@@ -90,15 +88,27 @@ export const extraNewsPool: { headline: string; source: string; sentiment: NewsI
   { headline: 'China GDP growth exceeds expectations at 5.2% for Q1', source: 'Reuters', sentiment: 'positive' },
   { headline: 'Goldman Sachs raises year-end target for global equities', source: 'CNBC', sentiment: 'positive' },
   { headline: 'Semiconductor stocks lead Nasdaq higher on AI chip demand', source: 'WSJ', sentiment: 'positive' },
-  { headline: 'Bank of Japan maintains ultra-loose monetary policy stance', source: 'Financial Times', sentiment: 'neutral' },
+  {
+    headline: 'Bank of Japan maintains ultra-loose monetary policy stance',
+    source: 'Financial Times',
+    sentiment: 'neutral',
+  },
   { headline: 'US jobless claims fall to lowest level since February', source: 'Bloomberg', sentiment: 'positive' },
   { headline: 'Copper prices surge 4% on renewed infrastructure spending', source: 'Reuters', sentiment: 'positive' },
   { headline: 'ESG fund inflows reach record $3.8B in single week', source: 'Barrons', sentiment: 'positive' },
   { headline: 'Dollar weakens against major currencies on rate cut bets', source: 'CNBC', sentiment: 'negative' },
-  { headline: 'Private equity deals hit 6-month high across APAC region', source: 'Financial Times', sentiment: 'positive' },
+  {
+    headline: 'Private equity deals hit 6-month high across APAC region',
+    source: 'Financial Times',
+    sentiment: 'positive',
+  },
   { headline: 'Natural gas futures drop 8% on warmer weather forecasts', source: 'Bloomberg', sentiment: 'negative' },
   { headline: 'India central bank holds rates, signals growth optimism', source: 'Reuters', sentiment: 'neutral' },
   { headline: 'Crypto markets stabilize as institutional inflows resume', source: 'WSJ', sentiment: 'neutral' },
   { headline: 'Australian dollar rallies on strong employment data', source: 'CNBC', sentiment: 'positive' },
-  { headline: 'EU regulators approve new green bond framework standards', source: 'Financial Times', sentiment: 'neutral' },
+  {
+    headline: 'EU regulators approve new green bond framework standards',
+    source: 'Financial Times',
+    sentiment: 'neutral',
+  },
 ]

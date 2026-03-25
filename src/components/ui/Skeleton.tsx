@@ -1,10 +1,5 @@
 export function SkeletonLine({ width = '100%', height = '12px' }: { width?: string; height?: string }) {
-  return (
-    <div
-      className="rounded bg-terminal-border/40 animate-pulse"
-      style={{ width, height }}
-    />
-  )
+  return <div className="rounded bg-terminal-border/40 animate-pulse" style={{ width, height }} />
 }
 
 const CHART_BAR_HEIGHTS = [45, 72, 38, 65, 50, 80, 42, 68, 55, 75, 35, 60, 48, 70, 52, 78, 40, 62, 58, 85]
