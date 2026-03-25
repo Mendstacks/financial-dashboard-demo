@@ -28,12 +28,13 @@ export function formatCompact(value: number): string {
 }
 
 export const TOOLTIP_STYLE: React.CSSProperties = {
-  backgroundColor: '#0d1117',
-  border: '1px solid #1c2333',
+  backgroundColor: 'rgba(0, 0, 0, 0.95)',
+  border: '1px solid #3a3f4b',
   borderRadius: '4px',
-  color: '#e6e8eb',
+  color: '#ffffff',
   fontSize: '11px',
   padding: '6px 10px',
+  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.5)',
 }
 
 /**

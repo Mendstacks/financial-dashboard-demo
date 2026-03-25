@@ -81,6 +81,7 @@ export function Dashboard() {
           margin={[6, 6]}
           containerPadding={[0, 0]}
           dragConfig={{ handle: '.drag-handle' }}
+          resizeConfig={{ handles: ['se', 's', 'e', 'sw', 'w', 'n', 'ne', 'nw'] }}
           onLayoutChange={(_currentLayout, allLayouts) => {
             updateLayouts(allLayouts)
           }}

@@ -13,7 +13,7 @@ export function UserTypeSelector() {
     <select
       value={userType}
       onChange={(e) => switchUserType(e.target.value as UserType)}
-      className="bg-terminal-surface text-terminal-muted border border-terminal-border rounded px-2 py-1 text-[10px] cursor-pointer outline-none focus:border-terminal-blue"
+      className="bg-terminal-surface text-terminal-text border border-terminal-border rounded px-2 py-1 text-[10px] cursor-pointer outline-none focus:border-terminal-orange"
     >
       {USER_TYPES.map((t) => (
         <option key={t.value} value={t.value}>

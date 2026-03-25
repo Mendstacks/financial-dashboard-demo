@@ -4,9 +4,9 @@
   /* Bloomberg-inspired palette */
   --color-terminal-bg: #000000;
   --color-terminal-surface: #0d1117;
-  --color-terminal-border: #1c2333;
+  --color-terminal-border: #3a4555;
   --color-terminal-text: #e6e8eb;
-  --color-terminal-muted: #6b7a8d;
+  --color-terminal-muted: #8b95a5;
   --color-terminal-green: #4af6c3;
   --color-terminal-red: #ff433d;
   --color-terminal-blue: #0068ff;
@@ -30,19 +30,88 @@ body {
   min-height: 100vh;
 }
 
-/* Tabular numbers for financial data — prevents layout shift */
 .tabular-nums {
   font-variant-numeric: tabular-nums;
 }
 
-/* react-grid-layout overrides for Bloomberg style */
+/* react-grid-layout overrides */
 .react-grid-item.react-grid-placeholder {
   background: var(--color-terminal-blue) !important;
-  opacity: 0.15 !important;
-  border-radius: 6px;
+  opacity: 0.2 !important;
+  border-radius: 4px;
 }
 
-.react-grid-item > .react-resizable-handle::after {
-  border-right-color: var(--color-terminal-muted) !important;
-  border-bottom-color: var(--color-terminal-muted) !important;
+/* SE corner: visible orange resize icon */
+.react-grid-item > .react-resizable-handle-se {
+  background-image: none !important;
+}
+.react-grid-item > .react-resizable-handle-se::after {
+  border-right-color: var(--color-terminal-orange) !important;
+  border-bottom-color: var(--color-terminal-orange) !important;
+}
+
+/*
+ * Edge handles: stretch to full edge, invisible but functional.
+ * !important needed to override react-resizable/css/styles.css which
+ * sets 20x20px centered handles. This is the correct use of !important —
+ * overriding third-party library styles.
+ */
+.react-grid-item > .react-resizable-handle-n,
+.react-grid-item > .react-resizable-handle-s {
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  height: 8px !important;
+  margin-left: 0 !important;
+  background-image: none !important;
+  transform: none !important;
+}
+
+.react-grid-item > .react-resizable-handle-e,
+.react-grid-item > .react-resizable-handle-w {
+  top: 0 !important;
+  bottom: 0 !important;
+  height: 100% !important;
+  width: 8px !important;
+  margin-top: 0 !important;
+  background-image: none !important;
+  transform: none !important;
+}
+
+/* Non-SE corners: hide icon */
+.react-grid-item > .react-resizable-handle-nw,
+.react-grid-item > .react-resizable-handle-ne,
+.react-grid-item > .react-resizable-handle-sw {
+  background-image: none !important;
+}
+
+
+/* Remove focus outline on Recharts SVG containers */
+.recharts-wrapper:focus,
+.recharts-surface:focus {
+  outline: none;
+}
+
+/* Dark scrollbar for Bloomberg aesthetic */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #4a5568 transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #4a5568;
+  border-radius: 3px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
 }

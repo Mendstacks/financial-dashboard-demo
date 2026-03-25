@@ -27,7 +27,7 @@ export function WidgetManager() {
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-1.5 px-2.5 py-1 text-xs text-terminal-muted hover:text-terminal-text border border-terminal-border rounded hover:bg-terminal-surface transition-colors"
+        className="flex items-center gap-1.5 px-2.5 py-1 text-xs text-terminal-text hover:text-terminal-orange border border-terminal-border rounded hover:bg-terminal-surface transition-colors"
       >
         <span>+</span>
         <span>Widgets</span>

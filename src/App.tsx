@@ -56,7 +56,7 @@ function App() {
           )}
         </div>
         <div className="flex items-center gap-3">
-          <div className="text-xs text-terminal-muted tabular-nums font-mono">
+          <div className="text-xs text-terminal-text tabular-nums font-mono">
             {new Date().toLocaleDateString('en-US', {
               weekday: 'short',
               year: 'numeric',
@@ -74,7 +74,7 @@ function App() {
         <Dashboard />
       </main>
 
-      <footer className="flex items-center justify-between px-4 py-1 border-t border-terminal-border text-[10px] text-terminal-muted tabular-nums font-mono bg-terminal-surface/30">
+      <footer className="flex items-center justify-between px-4 py-1 border-t border-terminal-border text-[10px] text-terminal-text/70 tabular-nums font-mono bg-terminal-surface">
         <span>Real-time simulation active</span>
         <span>Last update: {new Date().toLocaleTimeString()}</span>
       </footer>

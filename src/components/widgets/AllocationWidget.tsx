@@ -43,7 +43,8 @@ export const AllocationWidget = memo(function AllocationWidget({ allocation }: A
             </Pie>
             <Tooltip
               contentStyle={TOOLTIP_STYLE}
-              formatter={(value) => [`${value}%`, '']}
+              itemStyle={{ color: '#ffffff' }}
+              formatter={(value, name) => [`${value}%`, name]}
             />
           </PieChart>
         </ResponsiveContainer>
