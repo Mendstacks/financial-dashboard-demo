@@ -14,38 +14,23 @@ const SEGMENTS = [
 ]
 
 export const AllocationWidget = memo(function AllocationWidget({ allocation }: AllocationWidgetProps) {
-  const data = SEGMENTS
-    .map((s) => ({
-      name: s.label,
-      value: allocation[s.key],
-      color: s.color,
-    }))
-    .filter((d) => d.value > 0)
+  const data = SEGMENTS.map((s) => ({
+    name: s.label,
+    value: allocation[s.key],
+    color: s.color,
+  })).filter((d) => d.value > 0)
 
   return (
     <div className="h-full flex flex-col min-h-[180px]">
       <div className="flex-1">
         <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
           <PieChart>
-            <Pie
-              data={data}
-              cx="50%"
-              cy="50%"
-              innerRadius="45%"
-              outerRadius="75%"
-              dataKey="value"
-              stroke="#000000"
-              strokeWidth={2}
-            >
+            <Pie data={data} cx="50%" cy="50%" innerRadius="45%" outerRadius="75%" dataKey="value" stroke="#000000" strokeWidth={2}>
               {data.map((entry) => (
                 <Cell key={entry.name} fill={entry.color} />
               ))}
             </Pie>
-            <Tooltip
-              contentStyle={TOOLTIP_STYLE}
-              itemStyle={{ color: '#ffffff' }}
-              formatter={(value, name) => [`${value}%`, name]}
-            />
+            <Tooltip contentStyle={TOOLTIP_STYLE} itemStyle={{ color: '#ffffff' }} formatter={(value, name) => [`${value}%`, name]} />
           </PieChart>
         </ResponsiveContainer>
       </div>

@@ -28,9 +28,7 @@ function App() {
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-terminal-green animate-pulse" />
-            <h1 className="text-xs font-bold tracking-widest uppercase text-terminal-orange">
-              HedgeSPA
-            </h1>
+            <h1 className="text-xs font-bold tracking-widest uppercase text-terminal-orange">HedgeSPA</h1>
           </div>
           <div className="w-px h-5 bg-terminal-border" />
           <PortfolioSelector />
@@ -41,14 +39,9 @@ function App() {
               <div className="w-px h-5 bg-terminal-border" />
               <div className="flex items-center gap-3 text-xs tabular-nums font-mono">
                 <span className="text-terminal-muted">NAV</span>
-                <span className="text-terminal-text font-medium">
-                  {formatCompactCurrency(portfolio.summary.totalValue, portfolio.currency)}
-                </span>
-                <span
-                  className={`font-medium ${isPositive ? 'text-terminal-green' : 'text-terminal-red'}`}
-                >
-                  {isPositive ? '▲' : '▼'}{' '}
-                  {isPositive ? '+' : ''}
+                <span className="text-terminal-text font-medium">{formatCompactCurrency(portfolio.summary.totalValue, portfolio.currency)}</span>
+                <span className={`font-medium ${isPositive ? 'text-terminal-green' : 'text-terminal-red'}`}>
+                  {isPositive ? '▲' : '▼'} {isPositive ? '+' : ''}
                   {portfolio.summary.todayGainLossPercent.toFixed(2)}%
                 </span>
               </div>

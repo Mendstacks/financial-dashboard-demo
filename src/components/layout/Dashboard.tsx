@@ -32,15 +32,9 @@ export function Dashboard() {
 
   const portfolio = portfolios.find((p) => p.id === selectedId)
 
-  const handlePopIn = useCallback(
-    (id: string) => () => popInWidget(id),
-    [popInWidget],
-  )
+  const handlePopIn = useCallback((id: string) => () => popInWidget(id), [popInWidget])
 
-  const handlePopOut = useCallback(
-    (id: string) => () => popOutWidget(id),
-    [popOutWidget],
-  )
+  const handlePopOut = useCallback((id: string) => () => popOutWidget(id), [popOutWidget])
 
   if (!portfolio) return null
 
@@ -52,9 +46,7 @@ export function Dashboard() {
     allocation: isLoading ? <AllocationSkeleton /> : <AllocationWidget allocation={portfolio.allocation} />,
   }
 
-  const gridWidgets = Object.entries(WIDGET_CONFIG).filter(
-    ([id]) => !isPoppedOut(id) && visibleWidgets.includes(id),
-  )
+  const gridWidgets = Object.entries(WIDGET_CONFIG).filter(([id]) => !isPoppedOut(id) && visibleWidgets.includes(id))
 
   return (
     <div ref={containerRef} className="flex-1">
@@ -63,9 +55,7 @@ export function Dashboard() {
         ([id, config]) =>
           isPoppedOut(id) && (
             <PopoutWindow key={id} title={config.title} onClose={handlePopIn(id)}>
-              <ErrorBoundary fallbackTitle={`${config.title} error`}>
-                {widgets[id]}
-              </ErrorBoundary>
+              <ErrorBoundary fallbackTitle={`${config.title} error`}>{widgets[id]}</ErrorBoundary>
             </PopoutWindow>
           ),
       )}
@@ -88,14 +78,8 @@ export function Dashboard() {
         >
           {gridWidgets.map(([id, config]) => (
             <div key={id}>
-              <WidgetContainer
-                title={config.title}
-                accentColor={config.accent}
-                onPopOut={handlePopOut(id)}
-              >
-                <ErrorBoundary fallbackTitle={`${config.title} error`}>
-                  {widgets[id]}
-                </ErrorBoundary>
+              <WidgetContainer title={config.title} accentColor={config.accent} onPopOut={handlePopOut(id)}>
+                <ErrorBoundary fallbackTitle={`${config.title} error`}>{widgets[id]}</ErrorBoundary>
               </WidgetContainer>
             </div>
           ))}

@@ -111,8 +111,16 @@ export function PopoutWindow({ title, children, onClose, width = 600, height = 4
   if (!container) return null
 
   return createPortal(
-    <div className="p-3 h-screen bg-terminal-bg text-terminal-text overflow-auto">
-      {children}
+    <div className="h-screen bg-terminal-bg text-terminal-text flex flex-col">
+      <div className="flex items-center justify-between px-3 py-2 bg-terminal-surface border-b border-terminal-border">
+        <span className="text-[11px] font-bold uppercase tracking-wider text-terminal-text">
+          {title}
+        </span>
+        <span className="text-[10px] text-terminal-muted">Pop-out</span>
+      </div>
+      <div className="flex-1 p-3 overflow-auto">
+        {children}
+      </div>
     </div>,
     container,
   )

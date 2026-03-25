@@ -38,23 +38,11 @@ export function WidgetManager() {
           {ALL_WIDGETS.map((widget) => {
             const isVisible = visibleWidgets.includes(widget.id)
             return (
-              <button
-                key={widget.id}
-                onClick={() => toggleWidget(widget.id)}
-                className="w-full flex items-center gap-2 px-3 py-2 text-xs hover:bg-terminal-border/30 text-left"
-              >
-                <div
-                  className={`w-3.5 h-3.5 rounded border flex items-center justify-center ${
-                    isVisible
-                      ? 'bg-terminal-blue border-terminal-blue'
-                      : 'border-terminal-border'
-                  }`}
-                >
+              <button key={widget.id} onClick={() => toggleWidget(widget.id)} className="w-full flex items-center gap-2 px-3 py-2 text-xs hover:bg-terminal-border/30 text-left">
+                <div className={`w-3.5 h-3.5 rounded border flex items-center justify-center ${isVisible ? 'bg-terminal-blue border-terminal-blue' : 'border-terminal-border'}`}>
                   {isVisible && <span className="text-white text-[9px]">✓</span>}
                 </div>
-                <span className={isVisible ? 'text-terminal-text' : 'text-terminal-muted'}>
-                  {widget.label}
-                </span>
+                <span className={isVisible ? 'text-terminal-text' : 'text-terminal-muted'}>{widget.label}</span>
               </button>
             )
           })}

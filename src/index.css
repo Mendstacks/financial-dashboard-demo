@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   /* Bloomberg-inspired palette */
@@ -78,13 +78,14 @@ body {
   transform: none !important;
 }
 
-/* Non-SE corners: hide icon */
-.react-grid-item > .react-resizable-handle-nw,
+/* Corner handles: above edge handles so corners always win */
+.react-grid-item > .react-resizable-handle-se,
+.react-grid-item > .react-resizable-handle-sw,
 .react-grid-item > .react-resizable-handle-ne,
-.react-grid-item > .react-resizable-handle-sw {
+.react-grid-item > .react-resizable-handle-nw {
+  z-index: 2;
   background-image: none !important;
 }
-
 
 /* Remove focus outline on Recharts SVG containers */
 .recharts-wrapper:focus,
