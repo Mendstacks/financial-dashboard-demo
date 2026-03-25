@@ -1,129 +1,107 @@
-import type { Portfolio, PerformancePoint } from '../types/portfolio'
+import type { Portfolio, Holding, NewsItem, PerformancePoint } from '../types/portfolio'
+import { portfolios, portfolioHoldings, portfolioNews, portfolioPerformance } from './clientMockData'
 
-function generatePerformanceData(baseValue: number, days: number): PerformancePoint[] {
-  const data: PerformancePoint[] = []
-  let value = baseValue * 0.92
-  const today = new Date()
+function transformToPortfolios(): Portfolio[] {
+  return portfolios.map((raw) => {
+    const holdings: Holding[] = portfolioHoldings
+      .filter((h) => h.portfolioId === raw.portfolioId)
+      .map((h) => {
+        const pnl = (h.lastPrice - h.averagePrice) * h.contract
+        const pnlPercent = h.averagePrice !== 0 ? (h.lastPrice - h.averagePrice) / h.averagePrice : 0
+        return {
+          recordId: h.recordId,
+          productId: h.productId,
+          productName: h.productName,
+          currency: h.currency,
+          assetClass: h.assetClass as Holding['assetClass'],
+          region: h.region,
+          sector: h.sector,
+          productType: h.productType as Holding['productType'],
+          exchangeName: h.exchangeName,
+          contract: h.contract,
+          position: h.position,
+          weight: h.weight,
+          averagePrice: h.averagePrice,
+          lastPrice: h.lastPrice,
+          pnl: Math.round(pnl * 100) / 100,
+          pnlPercent: Math.round(pnlPercent * 10000) / 10000,
+          lastCob: h.lastCob,
+        }
+      })
 
-  for (let i = days; i >= 0; i--) {
-    const date = new Date(today)
-    date.setDate(date.getDate() - i)
-    const change = (Math.random() - 0.45) * baseValue * 0.008
-    value = Math.max(value + change, baseValue * 0.85)
-    data.push({
-      date: date.toISOString().split('T')[0],
-      value: Math.round(value * 100) / 100,
-    })
-  }
+    const totalValue = holdings.reduce((sum, h) => sum + h.position, 0)
+    const todayGainLoss = holdings
+      .filter((h) => h.assetClass !== 'Cash')
+      .reduce((sum, h) => sum + h.pnl, 0)
+    const todayGainLossPercent = totalValue > 0 ? (todayGainLoss / (totalValue - todayGainLoss)) * 100 : 0
 
-  return data
+    // Derive allocation from holdings by assetClass
+    const equityWeight = holdings.filter((h) => h.assetClass === 'Equity').reduce((s, h) => s + h.weight, 0)
+    const bondWeight = holdings.filter((h) => h.assetClass === 'Fixed Income').reduce((s, h) => s + h.weight, 0)
+    const cashWeight = holdings.filter((h) => h.assetClass === 'Cash').reduce((s, h) => s + h.weight, 0)
+
+    const news: NewsItem[] = portfolioNews
+      .filter((n) => n.portfolioId === raw.portfolioId)
+      .map((n) => ({
+        id: String(n.id),
+        headline: n.headline,
+        source: n.source,
+        timestamp: n.timestamp,
+        sentiment: n.sentiment as NewsItem['sentiment'],
+      }))
+
+    const performanceData: PerformancePoint[] = portfolioPerformance
+      .filter((p) => p.portfolioId === raw.portfolioId)
+      .map((p) => ({
+        date: p.cobDate,
+        value: p.nav,
+        normalizedNav: p.normalizedNav,
+        dtdChange: p.dtdChange,
+        mtdChange: p.mtdChange,
+        qtdChange: p.qtdChange,
+        ytdChange: p.ytdChange,
+      }))
+
+    return {
+      id: String(raw.portfolioId),
+      portfolioId: raw.portfolioId,
+      name: raw.portfolioName,
+      description: raw.portfolioDesc,
+      currency: raw.currency,
+      cash: raw.cash,
+      summary: {
+        totalValue: Math.round(totalValue * 100) / 100,
+        todayGainLoss: Math.round(todayGainLoss * 100) / 100,
+        todayGainLossPercent: Math.round(todayGainLossPercent * 10000) / 10000,
+        performanceData,
+      },
+      holdings,
+      allocation: {
+        stocks: Math.round(equityWeight * 100),
+        bonds: Math.round(bondWeight * 100),
+        cash: Math.round(cashWeight * 100),
+      },
+      news,
+    }
+  })
 }
 
-export const extraNewsPool = [
-  { headline: 'S&P 500 hits new all-time high on broad market rally', source: 'Bloomberg' },
-  { headline: 'China GDP growth exceeds expectations at 5.2% for Q1', source: 'Reuters' },
-  { headline: 'Goldman Sachs raises year-end target for global equities', source: 'CNBC' },
-  { headline: 'Semiconductor stocks lead Nasdaq higher on AI chip demand', source: 'WSJ' },
-  { headline: 'Bank of Japan maintains ultra-loose monetary policy stance', source: 'Financial Times' },
-  { headline: 'US jobless claims fall to lowest level since February', source: 'Bloomberg' },
-  { headline: 'Copper prices surge 4% on renewed infrastructure spending', source: 'Reuters' },
-  { headline: 'ESG fund inflows reach record $3.8B in single week', source: 'Barrons' },
-  { headline: 'Dollar weakens against major currencies on rate cut bets', source: 'CNBC' },
-  { headline: 'Private equity deals hit 6-month high across APAC region', source: 'Financial Times' },
-  { headline: 'Natural gas futures drop 8% on warmer weather forecasts', source: 'Bloomberg' },
-  { headline: 'India central bank holds rates, signals growth optimism', source: 'Reuters' },
-  { headline: 'Crypto markets stabilize as institutional inflows resume', source: 'WSJ' },
-  { headline: 'Australian dollar rallies on strong employment data', source: 'CNBC' },
-  { headline: 'EU regulators approve new green bond framework standards', source: 'Financial Times' },
-]
+export const mockPortfolios: Portfolio[] = transformToPortfolios()
 
-export const mockPortfolios: Portfolio[] = [
-  {
-    id: 'portfolio-1',
-    name: 'Global Equity Fund',
-    summary: {
-      totalValue: 12575000.0,
-      todayGainLoss: 18750.5,
-      todayGainLossPercent: 0.15,
-      performanceData: generatePerformanceData(12575000, 30),
-    },
-    allocation: {
-      stocks: 70,
-      bonds: 20,
-      cash: 10,
-    },
-    news: [
-      {
-        id: 'n1',
-        headline: 'Fed holds interest rates steady, signals two cuts later this year',
-        source: 'Financial Times',
-        timestamp: '2026-03-14T09:30:00Z',
-      },
-      {
-        id: 'n2',
-        headline: 'Tech sector surges on AI earnings optimism across major indices',
-        source: 'WSJ',
-        timestamp: '2026-03-14T09:15:00Z',
-      },
-      {
-        id: 'n3',
-        headline: 'European markets rally as ECB signals dovish stance on rates',
-        source: 'Reuters',
-        timestamp: '2026-03-14T08:45:00Z',
-      },
-      {
-        id: 'n4',
-        headline: 'Oil prices climb 2.3% amid Middle East supply concerns',
-        source: 'Bloomberg',
-        timestamp: '2026-03-14T08:20:00Z',
-      },
-      {
-        id: 'n5',
-        headline: 'US Treasury yields fall to 3-month low on dovish Fed outlook',
-        source: 'CNBC',
-        timestamp: '2026-03-14T07:50:00Z',
-      },
-    ],
-  },
-  {
-    id: 'portfolio-2',
-    name: 'Fixed Income Plus',
-    summary: {
-      totalValue: 5432000.0,
-      todayGainLoss: -3200.25,
-      todayGainLossPercent: -0.06,
-      performanceData: generatePerformanceData(5432000, 30),
-    },
-    allocation: {
-      stocks: 15,
-      bonds: 65,
-      cash: 20,
-    },
-    news: [
-      {
-        id: 'n6',
-        headline: 'Corporate bond spreads tighten as default rates hit 5-year low',
-        source: 'Financial Times',
-        timestamp: '2026-03-14T09:25:00Z',
-      },
-      {
-        id: 'n7',
-        headline: 'High-yield bond funds see $2.1B inflows this week',
-        source: 'Barrons',
-        timestamp: '2026-03-14T09:00:00Z',
-      },
-      {
-        id: 'n8',
-        headline: 'Municipal bonds outperform as tax season drives demand',
-        source: 'WSJ',
-        timestamp: '2026-03-14T08:30:00Z',
-      },
-      {
-        id: 'n9',
-        headline: 'Emerging market debt rallies on weaker dollar outlook',
-        source: 'Reuters',
-        timestamp: '2026-03-14T08:10:00Z',
-      },
-    ],
-  },
+export const extraNewsPool: { headline: string; source: string; sentiment: NewsItem['sentiment'] }[] = [
+  { headline: 'S&P 500 hits new all-time high on broad market rally', source: 'Bloomberg', sentiment: 'positive' },
+  { headline: 'China GDP growth exceeds expectations at 5.2% for Q1', source: 'Reuters', sentiment: 'positive' },
+  { headline: 'Goldman Sachs raises year-end target for global equities', source: 'CNBC', sentiment: 'positive' },
+  { headline: 'Semiconductor stocks lead Nasdaq higher on AI chip demand', source: 'WSJ', sentiment: 'positive' },
+  { headline: 'Bank of Japan maintains ultra-loose monetary policy stance', source: 'Financial Times', sentiment: 'neutral' },
+  { headline: 'US jobless claims fall to lowest level since February', source: 'Bloomberg', sentiment: 'positive' },
+  { headline: 'Copper prices surge 4% on renewed infrastructure spending', source: 'Reuters', sentiment: 'positive' },
+  { headline: 'ESG fund inflows reach record $3.8B in single week', source: 'Barrons', sentiment: 'positive' },
+  { headline: 'Dollar weakens against major currencies on rate cut bets', source: 'CNBC', sentiment: 'negative' },
+  { headline: 'Private equity deals hit 6-month high across APAC region', source: 'Financial Times', sentiment: 'positive' },
+  { headline: 'Natural gas futures drop 8% on warmer weather forecasts', source: 'Bloomberg', sentiment: 'negative' },
+  { headline: 'India central bank holds rates, signals growth optimism', source: 'Reuters', sentiment: 'neutral' },
+  { headline: 'Crypto markets stabilize as institutional inflows resume', source: 'WSJ', sentiment: 'neutral' },
+  { headline: 'Australian dollar rallies on strong employment data', source: 'CNBC', sentiment: 'positive' },
+  { headline: 'EU regulators approve new green bond framework standards', source: 'Financial Times', sentiment: 'neutral' },
 ]
