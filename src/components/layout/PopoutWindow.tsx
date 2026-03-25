@@ -38,26 +38,20 @@ export function PopoutWindow({ title, children, onClose, width = 600, height = 4
 
     windowRef.current = popup
 
-    popup.document.open()
-    popup.document.write(`
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <title></title>
-          <style>body { margin: 0; background: #000000; color: #e6e8eb; font-family: 'Inter', system-ui, sans-serif; }</style>
-        </head>
-        <body><div id="popout-root"></div></body>
-      </html>
-    `)
-    popup.document.close()
-    popup.document.title = title
+    const doc = popup.document
+    doc.title = title
 
-    const parentStyles = document.querySelectorAll('link[rel="stylesheet"], style')
-    parentStyles.forEach((node) => {
-      popup.document.head.appendChild(node.cloneNode(true))
+    const style = doc.createElement('style')
+    style.textContent = 'body { margin: 0; background: #000000; color: #e6e8eb; font-family: "Inter", system-ui, sans-serif; }'
+    doc.head.appendChild(style)
+
+    document.querySelectorAll('link[rel="stylesheet"], style').forEach((node) => {
+      doc.head.appendChild(node.cloneNode(true))
     })
 
-    const div = popup.document.getElementById('popout-root') as HTMLDivElement
+    const div = doc.createElement('div')
+    div.id = 'popout-root'
+    doc.body.appendChild(div)
     setContainer(div)
 
     const pollInterval = setInterval(() => {
@@ -78,8 +72,7 @@ export function PopoutWindow({ title, children, onClose, width = 600, height = 4
       windowRef.current = null
       setContainer(null)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [title])
+  }, [title, width, height])
 
   if (blocked) {
     return (
