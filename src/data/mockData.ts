@@ -17,7 +17,7 @@ function transformToPortfolios(): Portfolio[] {
           region: h.region,
           sector: h.sector,
           productType: h.productType as Holding['productType'],
-          exchangeName: h.exchangeName,
+          exchangeName: h.exchangeName ?? null,
           contract: h.contract,
           position: h.position,
           weight: h.weight,

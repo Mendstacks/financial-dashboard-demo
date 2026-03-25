@@ -7,14 +7,16 @@ export function SkeletonLine({ width = '100%', height = '12px' }: { width?: stri
   )
 }
 
+const CHART_BAR_HEIGHTS = [45, 72, 38, 65, 50, 80, 42, 68, 55, 75, 35, 60, 48, 70, 52, 78, 40, 62, 58, 85]
+
 export function SkeletonChart() {
   return (
     <div className="flex-1 flex items-end gap-1 px-2 min-h-[120px]">
-      {Array.from({ length: 20 }).map((_, i) => (
+      {CHART_BAR_HEIGHTS.map((h, i) => (
         <div
           key={i}
           className="flex-1 rounded-t bg-terminal-border/30 animate-pulse"
-          style={{ height: `${30 + Math.random() * 60}%`, animationDelay: `${i * 50}ms` }}
+          style={{ height: `${h}%`, animationDelay: `${i * 50}ms` }}
         />
       ))}
     </div>

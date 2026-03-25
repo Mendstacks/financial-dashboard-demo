@@ -6,20 +6,16 @@ export function PortfolioSelector() {
   const selectPortfolio = usePortfolioStore((s) => s.selectPortfolio)
 
   return (
-    <div className="flex gap-1">
+    <select
+      value={selectedId}
+      onChange={(e) => selectPortfolio(e.target.value)}
+      className="bg-terminal-surface text-terminal-text border border-terminal-border rounded px-3 py-1 text-xs font-medium cursor-pointer outline-none focus:border-terminal-blue"
+    >
       {portfolios.map((p) => (
-        <button
-          key={p.id}
-          onClick={() => selectPortfolio(p.id)}
-          className={`px-3 py-1 text-xs font-medium rounded transition-colors ${
-            selectedId === p.id
-              ? 'bg-terminal-blue/20 text-terminal-blue border border-terminal-blue/40'
-              : 'text-terminal-muted hover:text-terminal-text border border-transparent hover:border-terminal-border'
-          }`}
-        >
+        <option key={p.id} value={p.id}>
           {p.name}
-        </button>
+        </option>
       ))}
-    </div>
+    </select>
   )
 }
