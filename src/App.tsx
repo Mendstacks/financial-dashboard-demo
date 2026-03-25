@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { PortfolioSelector } from './components/PortfolioSelector'
 import { WidgetManager } from './components/WidgetManager'
+import { UserTypeSelector } from './components/UserTypeSelector'
 import { Dashboard } from './components/layout/Dashboard'
 import { useMockRealtime } from './hooks/useMockRealtime'
 import { usePortfolioStore } from './store/usePortfolioStore'
@@ -69,6 +70,8 @@ function App() {
               day: 'numeric',
             })}
           </div>
+          <div className="w-px h-5 bg-terminal-border" />
+          <UserTypeSelector />
           <div className="w-2 h-2 rounded-full bg-terminal-green" title="Market Open" />
         </div>
       </header>
