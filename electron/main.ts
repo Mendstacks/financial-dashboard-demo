@@ -18,7 +18,7 @@ function createWindow() {
     minWidth: 900,
     minHeight: 600,
     title: 'Financial Dashboard',
-    backgroundColor: '#0a0e17',
+    backgroundColor: '#000000',
     webPreferences: {
       preload: path.join(__dirname, 'preload.mjs'),
       contextIsolation: true,
@@ -34,7 +34,7 @@ function createWindow() {
         width: 620,
         height: 470,
         title: frameName || 'Widget',
-        backgroundColor: '#0a0e17',
+        backgroundColor: '#000000',
         autoHideMenuBar: true,
         webPreferences: {
           contextIsolation: true,

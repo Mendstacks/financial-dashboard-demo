@@ -8,9 +8,9 @@ interface AllocationWidgetProps {
 }
 
 const SEGMENTS = [
-  { key: 'stocks' as const, label: 'Stocks', color: '#3b82f6' },
-  { key: 'bonds' as const, label: 'Bonds', color: '#f59e0b' },
-  { key: 'cash' as const, label: 'Cash', color: '#00d26a' },
+  { key: 'stocks' as const, label: 'Stocks', color: '#0068ff' },
+  { key: 'bonds' as const, label: 'Bonds', color: '#f39f41' },
+  { key: 'cash' as const, label: 'Cash', color: '#4af6c3' },
 ]
 
 export const AllocationWidget = memo(function AllocationWidget({ allocation }: AllocationWidgetProps) {
@@ -34,7 +34,7 @@ export const AllocationWidget = memo(function AllocationWidget({ allocation }: A
               innerRadius="45%"
               outerRadius="75%"
               dataKey="value"
-              stroke="#0a0e17"
+              stroke="#000000"
               strokeWidth={2}
             >
               {data.map((entry) => (

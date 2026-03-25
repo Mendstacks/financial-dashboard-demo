@@ -60,10 +60,10 @@ export const SummaryWidget = memo(function SummaryWidget({ summary, holdings, cu
               <Line
                 type="monotone"
                 dataKey="value"
-                stroke={isPositive ? '#00d26a' : '#ff3b3b'}
+                stroke={isPositive ? '#4af6c3' : '#ff433d'}
                 strokeWidth={1.5}
                 dot={false}
-                activeDot={{ r: 3, fill: isPositive ? '#00d26a' : '#ff3b3b' }}
+                activeDot={{ r: 3, fill: isPositive ? '#4af6c3' : '#ff433d' }}
               />
             </LineChart>
           </ResponsiveContainer>

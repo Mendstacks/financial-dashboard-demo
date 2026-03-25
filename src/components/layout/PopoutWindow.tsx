@@ -44,7 +44,7 @@ export function PopoutWindow({ title, children, onClose, width = 600, height = 4
       <html>
         <head>
           <title></title>
-          <style>body { margin: 0; background: #0a0e17; color: #e1e7ef; font-family: 'Inter', system-ui, sans-serif; }</style>
+          <style>body { margin: 0; background: #000000; color: #e6e8eb; font-family: 'Inter', system-ui, sans-serif; }</style>
         </head>
         <body><div id="popout-root"></div></body>
       </html>

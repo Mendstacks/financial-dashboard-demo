@@ -28,7 +28,7 @@ function App() {
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-terminal-green animate-pulse" />
-            <h1 className="text-xs font-bold tracking-widest uppercase text-terminal-muted">
+            <h1 className="text-xs font-bold tracking-widest uppercase text-terminal-orange">
               HedgeSPA
             </h1>
           </div>
