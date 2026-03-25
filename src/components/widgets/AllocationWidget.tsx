@@ -12,11 +12,13 @@ const SEGMENTS = [
 ]
 
 export function AllocationWidget({ allocation }: AllocationWidgetProps) {
-  const data = SEGMENTS.map((s) => ({
-    name: s.label,
-    value: allocation[s.key],
-    color: s.color,
-  }))
+  const data = SEGMENTS
+    .map((s) => ({
+      name: s.label,
+      value: allocation[s.key],
+      color: s.color,
+    }))
+    .filter((d) => d.value > 0)
 
   return (
     <div className="h-full flex flex-col min-h-[180px]">

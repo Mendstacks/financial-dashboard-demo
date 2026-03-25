@@ -5,10 +5,11 @@ import { Dashboard } from './components/layout/Dashboard'
 import { useMockRealtime } from './hooks/useMockRealtime'
 import { usePortfolioStore } from './store/usePortfolioStore'
 
-function formatCompactCurrency(value: number): string {
-  if (value >= 1_000_000) return `$${(value / 1_000_000).toFixed(2)}M`
-  if (value >= 1_000) return `$${(value / 1_000).toFixed(1)}K`
-  return `$${value.toFixed(2)}`
+function formatCompactCurrency(value: number, currency: string = 'USD'): string {
+  const symbol = currency === 'SGD' ? 'S$' : currency === 'HKD' ? 'HK$' : '$'
+  if (value >= 1_000_000) return `${symbol}${(value / 1_000_000).toFixed(2)}M`
+  if (value >= 1_000) return `${symbol}${(value / 1_000).toFixed(1)}K`
+  return `${symbol}${value.toFixed(2)}`
 }
 
 function App() {
@@ -46,7 +47,7 @@ function App() {
               <div className="flex items-center gap-3 text-xs tabular-nums font-mono">
                 <span className="text-terminal-muted">NAV</span>
                 <span className="text-terminal-text font-medium">
-                  {formatCompactCurrency(portfolio.summary.totalValue)}
+                  {formatCompactCurrency(portfolio.summary.totalValue, portfolio.currency)}
                 </span>
                 <span
                   className={`font-medium ${isPositive ? 'text-terminal-green' : 'text-terminal-red'}`}

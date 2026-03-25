@@ -4,6 +4,7 @@ import { mockPortfolios } from '../data/mockData'
 import type { ResponsiveLayouts } from 'react-grid-layout'
 
 const LAYOUTS_STORAGE_KEY = 'financial-dashboard-layouts'
+const SELECTED_PORTFOLIO_KEY = 'financial-dashboard-selected-portfolio'
 
 const defaultLayouts: ResponsiveLayouts = {
   lg: [
@@ -65,12 +66,15 @@ interface PortfolioState {
 
 export const usePortfolioStore = create<PortfolioState>((set) => ({
   portfolios: mockPortfolios,
-  selectedPortfolioId: mockPortfolios[0].id,
+  selectedPortfolioId: localStorage.getItem(SELECTED_PORTFOLIO_KEY) ?? mockPortfolios[0].id,
   layouts: loadLayouts(),
   poppedOutWidgets: [],
   visibleWidgets: ['summary', 'news', 'allocation'],
   isLoading: true,
-  selectPortfolio: (id) => set({ selectedPortfolioId: id }),
+  selectPortfolio: (id) => {
+    localStorage.setItem(SELECTED_PORTFOLIO_KEY, id)
+    set({ selectedPortfolioId: id })
+  },
   updatePortfolios: (portfolios) => set({ portfolios }),
   updateLayouts: (layouts) => {
     localStorage.setItem(LAYOUTS_STORAGE_KEY, JSON.stringify(layouts))

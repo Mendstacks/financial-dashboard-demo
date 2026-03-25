@@ -28,7 +28,11 @@ export function NewsWidget({ news }: NewsWidgetProps) {
             index < news.length - 1 ? 'border-b border-terminal-border/50' : ''
           }`}
         >
-          <div className="w-1 rounded-full bg-terminal-blue shrink-0 mt-1" style={{ height: '12px' }} />
+          <div className={`w-1 rounded-full shrink-0 mt-1 ${
+            item.sentiment === 'positive' ? 'bg-terminal-green' :
+            item.sentiment === 'negative' ? 'bg-terminal-red' :
+            'bg-terminal-muted'
+          }`} style={{ height: '12px' }} />
           <div className="flex-1 min-w-0">
             <div className="text-xs text-terminal-text leading-snug">
               {item.headline}

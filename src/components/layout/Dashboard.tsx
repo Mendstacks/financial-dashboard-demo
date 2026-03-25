@@ -47,7 +47,7 @@ export function Dashboard() {
   const isPoppedOut = (id: string) => poppedOutWidgets.includes(id)
 
   const widgets: Record<string, ReactNode> = {
-    summary: isLoading ? <SummarySkeleton /> : <SummaryWidget summary={portfolio.summary} />,
+    summary: isLoading ? <SummarySkeleton /> : <SummaryWidget summary={portfolio.summary} holdings={portfolio.holdings} currency={portfolio.currency} />,
     news: isLoading ? <NewsSkeleton /> : <NewsWidget news={portfolio.news} />,
     allocation: isLoading ? <AllocationSkeleton /> : <AllocationWidget allocation={portfolio.allocation} />,
   }
