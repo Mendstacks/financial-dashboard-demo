@@ -5,13 +5,7 @@ import { UserTypeSelector } from './components/UserTypeSelector'
 import { Dashboard } from './components/layout/Dashboard'
 import { useMockRealtime } from './hooks/useMockRealtime'
 import { usePortfolioStore } from './store/usePortfolioStore'
-
-function formatCompactCurrency(value: number, currency: string = 'USD'): string {
-  const symbol = currency === 'SGD' ? 'S$' : currency === 'HKD' ? 'HK$' : '$'
-  if (value >= 1_000_000) return `${symbol}${(value / 1_000_000).toFixed(2)}M`
-  if (value >= 1_000) return `${symbol}${(value / 1_000).toFixed(1)}K`
-  return `${symbol}${value.toFixed(2)}`
-}
+import { formatCompactCurrency } from './utils/format'
 
 function App() {
   useMockRealtime()

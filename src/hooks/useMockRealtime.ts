@@ -1,13 +1,13 @@
 import { useEffect, useRef } from 'react'
 import { usePortfolioStore } from '../store/usePortfolioStore'
 import { extraNewsPool } from '../data/mockData'
-
-let newsCounter = 100
+import { roundAllocation } from '../utils/format'
 
 export function useMockRealtime(intervalMs: number = 7000) {
   const updatePortfolios = usePortfolioStore((s) => s.updatePortfolios)
   const intervalRef = useRef<ReturnType<typeof setInterval>>(null)
   const newsIndexRef = useRef(0)
+  const newsCounterRef = useRef(100)
 
   useEffect(() => {
     intervalRef.current = setInterval(() => {
@@ -52,10 +52,10 @@ export function useMockRealtime(intervalMs: number = 7000) {
         if (Math.random() < 0.3 && extraNewsPool.length > 0) {
           const poolItem = extraNewsPool[newsIndexRef.current % extraNewsPool.length]
           newsIndexRef.current++
-          newsCounter++
+          newsCounterRef.current++
           news = [
             {
-              id: `live-${newsCounter}`,
+              id: `live-${newsCounterRef.current}`,
               headline: poolItem.headline,
               source: poolItem.source,
               timestamp: new Date().toISOString(),
@@ -74,11 +74,7 @@ export function useMockRealtime(intervalMs: number = 7000) {
             todayGainLoss: Math.round(todayGainLoss * 100) / 100,
             todayGainLossPercent: Math.round(todayGainLossPercent * 10000) / 10000,
           },
-          allocation: {
-            stocks: Math.round(equityWeight * 100),
-            bonds: Math.round(bondWeight * 100),
-            cash: Math.round(cashWeight * 100),
-          },
+          allocation: roundAllocation(equityWeight, bondWeight, cashWeight),
           news,
         }
       })

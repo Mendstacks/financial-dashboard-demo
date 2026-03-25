@@ -43,13 +43,14 @@ export function PopoutWindow({ title, children, onClose, width = 600, height = 4
       <!DOCTYPE html>
       <html>
         <head>
-          <title>${title}</title>
+          <title></title>
           <style>body { margin: 0; background: #0a0e17; color: #e1e7ef; font-family: 'Inter', system-ui, sans-serif; }</style>
         </head>
         <body><div id="popout-root"></div></body>
       </html>
     `)
     popup.document.close()
+    popup.document.title = title
 
     const parentStyles = document.querySelectorAll('link[rel="stylesheet"], style')
     parentStyles.forEach((node) => {

@@ -1,5 +1,7 @@
+import { memo } from 'react'
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
 import type { Allocation } from '../../types/portfolio'
+import { TOOLTIP_STYLE } from '../../utils/format'
 
 interface AllocationWidgetProps {
   allocation: Allocation
@@ -11,7 +13,7 @@ const SEGMENTS = [
   { key: 'cash' as const, label: 'Cash', color: '#00d26a' },
 ]
 
-export function AllocationWidget({ allocation }: AllocationWidgetProps) {
+export const AllocationWidget = memo(function AllocationWidget({ allocation }: AllocationWidgetProps) {
   const data = SEGMENTS
     .map((s) => ({
       name: s.label,
@@ -40,14 +42,7 @@ export function AllocationWidget({ allocation }: AllocationWidgetProps) {
               ))}
             </Pie>
             <Tooltip
-              contentStyle={{
-                backgroundColor: '#131926',
-                border: '1px solid #1e2a3a',
-                borderRadius: '4px',
-                color: '#e1e7ef',
-                fontSize: '11px',
-                padding: '6px 10px',
-              }}
+              contentStyle={TOOLTIP_STYLE}
               formatter={(value) => [`${value}%`, '']}
             />
           </PieChart>
@@ -64,4 +59,4 @@ export function AllocationWidget({ allocation }: AllocationWidgetProps) {
       </div>
     </div>
   )
-}
+})

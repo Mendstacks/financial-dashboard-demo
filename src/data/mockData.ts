@@ -1,5 +1,6 @@
 import type { Portfolio, Holding, NewsItem, PerformancePoint } from '../types/portfolio'
 import { portfolios, portfolioHoldings, portfolioNews, portfolioPerformance } from './clientMockData'
+import { roundAllocation } from '../utils/format'
 
 function transformToPortfolios(): Portfolio[] {
   return portfolios.map((raw) => {
@@ -76,11 +77,7 @@ function transformToPortfolios(): Portfolio[] {
         performanceData,
       },
       holdings,
-      allocation: {
-        stocks: Math.round(equityWeight * 100),
-        bonds: Math.round(bondWeight * 100),
-        cash: Math.round(cashWeight * 100),
-      },
+      allocation: roundAllocation(equityWeight, bondWeight, cashWeight),
       news,
     }
   })

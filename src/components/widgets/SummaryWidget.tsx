@@ -1,5 +1,7 @@
+import { memo } from 'react'
 import { LineChart, Line, ResponsiveContainer, Tooltip, YAxis } from 'recharts'
 import type { PortfolioSummary, Holding } from '../../types/portfolio'
+import { formatCurrency, formatPercent, formatCompact, TOOLTIP_STYLE } from '../../utils/format'
 
 interface SummaryWidgetProps {
   summary: PortfolioSummary
@@ -7,27 +9,7 @@ interface SummaryWidgetProps {
   currency: string
 }
 
-function formatCurrency(value: number, currency: string = 'USD'): string {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency,
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(value)
-}
-
-function formatPercent(value: number): string {
-  const sign = value >= 0 ? '+' : ''
-  return `${sign}${value.toFixed(2)}%`
-}
-
-function formatCompact(value: number): string {
-  if (Math.abs(value) >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}M`
-  if (Math.abs(value) >= 1_000) return `${(value / 1_000).toFixed(0)}K`
-  return value.toFixed(0)
-}
-
-export function SummaryWidget({ summary, holdings, currency }: SummaryWidgetProps) {
+export const SummaryWidget = memo(function SummaryWidget({ summary, holdings, currency }: SummaryWidgetProps) {
   const isPositive = summary.todayGainLoss >= 0
   const hasPerformance = summary.performanceData.length > 0
 
@@ -71,14 +53,7 @@ export function SummaryWidget({ summary, holdings, currency }: SummaryWidgetProp
             <LineChart data={summary.performanceData}>
               <YAxis domain={['dataMin', 'dataMax']} hide />
               <Tooltip
-                contentStyle={{
-                  backgroundColor: '#131926',
-                  border: '1px solid #1e2a3a',
-                  borderRadius: '4px',
-                  color: '#e1e7ef',
-                  fontSize: '11px',
-                  padding: '6px 10px',
-                }}
+                contentStyle={TOOLTIP_STYLE}
                 formatter={(value) => [formatCurrency(Number(value), currency), 'NAV']}
                 labelFormatter={(label) => `${label}`}
               />
@@ -99,7 +74,6 @@ export function SummaryWidget({ summary, holdings, currency }: SummaryWidgetProp
         </div>
       )}
 
-      {/* Holdings Table */}
       {holdings.length > 0 && (
         <div className="flex-1 overflow-auto min-h-0">
           <table className="w-full text-[10px] tabular-nums font-mono">
@@ -130,4 +104,4 @@ export function SummaryWidget({ summary, holdings, currency }: SummaryWidgetProp
       )}
     </div>
   )
-}
+})

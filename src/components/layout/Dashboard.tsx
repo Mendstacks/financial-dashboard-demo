@@ -63,7 +63,9 @@ export function Dashboard() {
         ([id, config]) =>
           isPoppedOut(id) && (
             <PopoutWindow key={id} title={config.title} onClose={handlePopIn(id)}>
-              {widgets[id]}
+              <ErrorBoundary fallbackTitle={`${config.title} error`}>
+                {widgets[id]}
+              </ErrorBoundary>
             </PopoutWindow>
           ),
       )}
