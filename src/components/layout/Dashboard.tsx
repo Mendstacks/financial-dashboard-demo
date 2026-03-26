@@ -53,7 +53,7 @@ export function Dashboard() {
   const gridWidgets = Object.entries(WIDGET_CONFIG).filter(([id]) => !isPoppedOut(id) && visibleWidgets.includes(id))
 
   return (
-    <div ref={containerRef} className="flex-1">
+    <div ref={containerRef} className="flex-1 test">
       {/* Popped-out windows */}
       {Object.entries(WIDGET_CONFIG).map(
         ([id, config]) =>

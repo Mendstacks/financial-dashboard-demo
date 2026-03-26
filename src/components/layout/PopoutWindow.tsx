@@ -15,7 +15,11 @@ export function PopoutWindow({ title, children, onClose, width = 600, height = 4
   const windowRef = useRef<Window | null>(null)
   const unmountedRef = useRef(false)
   const onCloseRef = useRef(onClose)
-  onCloseRef.current = onClose
+  const cleanupRef = useRef<(() => void) | null>(null)
+
+  useEffect(() => {
+    onCloseRef.current = onClose
+  }, [onClose])
 
   useEffect(() => {
     if (windowRef.current && !windowRef.current.closed) return
@@ -32,7 +36,8 @@ export function PopoutWindow({ title, children, onClose, width = 600, height = 4
     )
 
     if (!popup) {
-      setBlocked(true)
+      // Defer state update to avoid synchronous setState in effect
+      queueMicrotask(() => setBlocked(true))
       return
     }
 
@@ -42,7 +47,8 @@ export function PopoutWindow({ title, children, onClose, width = 600, height = 4
     doc.title = title
 
     const style = doc.createElement('style')
-    style.textContent = 'body { margin: 0; background: #000000; color: #e6e8eb; font-family: "Inter", system-ui, sans-serif; }'
+    style.textContent =
+      'body { margin: 0; background: #000000; color: #e6e8eb; font-family: "Inter", system-ui, sans-serif; }'
     doc.head.appendChild(style)
 
     document.querySelectorAll('link[rel="stylesheet"], style').forEach((node) => {
@@ -52,7 +58,9 @@ export function PopoutWindow({ title, children, onClose, width = 600, height = 4
     const div = doc.createElement('div')
     div.id = 'popout-root'
     doc.body.appendChild(div)
-    setContainer(div)
+
+    // Defer state update to avoid synchronous setState in effect
+    queueMicrotask(() => setContainer(div))
 
     const pollInterval = setInterval(() => {
       if (popup.closed && !unmountedRef.current) {
@@ -63,9 +71,11 @@ export function PopoutWindow({ title, children, onClose, width = 600, height = 4
       }
     }, 500)
 
+    cleanupRef.current = () => clearInterval(pollInterval)
+
     return () => {
       unmountedRef.current = true
-      clearInterval(pollInterval)
+      cleanupRef.current?.()
       if (windowRef.current && !windowRef.current.closed) {
         windowRef.current.close()
       }
@@ -84,7 +94,7 @@ export function PopoutWindow({ title, children, onClose, width = 600, height = 4
           </p>
           <ol className="text-terminal-muted text-xs space-y-1 mb-4 list-decimal list-inside">
             <li>Click the popup-blocked icon in the address bar</li>
-            <li>Select "Always allow popups from this site"</li>
+            <li>Select &quot;Always allow popups from this site&quot;</li>
             <li>Try the pop-out again</li>
           </ol>
           <button

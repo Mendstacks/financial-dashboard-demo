@@ -1,5 +1,5 @@
 import { memo } from 'react'
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
+import { PieChart, Pie, ResponsiveContainer, Tooltip } from 'recharts'
 import type { Allocation } from '../../types/portfolio'
 import { TOOLTIP_STYLE } from '../../utils/format'
 
@@ -14,11 +14,13 @@ const SEGMENTS = [
 ]
 
 export const AllocationWidget = memo(function AllocationWidget({ allocation }: AllocationWidgetProps) {
-  const data = SEGMENTS.map((s) => ({
-    name: s.label,
-    value: allocation[s.key],
-    color: s.color,
-  })).filter((d) => d.value > 0)
+  const data = SEGMENTS
+    .map((s) => ({
+      name: s.label,
+      value: allocation[s.key],
+      fill: s.color,
+    }))
+    .filter((d) => d.value > 0)
 
   return (
     <div className="h-full flex flex-col min-h-[180px]">
@@ -34,11 +36,7 @@ export const AllocationWidget = memo(function AllocationWidget({ allocation }: A
               dataKey="value"
               stroke="#000000"
               strokeWidth={2}
-            >
-              {data.map((entry) => (
-                <Cell key={entry.name} fill={entry.color} />
-              ))}
-            </Pie>
+            />
             <Tooltip
               contentStyle={TOOLTIP_STYLE}
               itemStyle={{ color: '#ffffff' }}
@@ -50,7 +48,7 @@ export const AllocationWidget = memo(function AllocationWidget({ allocation }: A
       <div className="flex justify-center gap-4 pt-1">
         {data.map((item) => (
           <div key={item.name} className="flex items-center gap-1.5">
-            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: item.color }} />
+            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: item.fill }} />
             <span className="text-[10px] text-terminal-muted">{item.name}</span>
             <span className="text-[10px] font-medium tabular-nums font-mono text-terminal-text">{item.value}%</span>
           </div>
