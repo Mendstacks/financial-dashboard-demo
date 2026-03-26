@@ -1,20 +1,20 @@
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 import type { Portfolio } from '../types/portfolio'
 import { mockPortfolios } from '../data/mockData'
 import type { ResponsiveLayouts } from 'react-grid-layout'
 
-const LAYOUTS_VERSION_KEY = 'financial-dashboard-layouts-version'
-const SELECTED_PORTFOLIO_KEY = 'financial-dashboard-selected-portfolio'
-const USER_TYPE_KEY = 'financial-dashboard-user-type'
-const CURRENT_LAYOUT_VERSION = 5
-
 export type UserType = 'front-office' | 'back-office'
 
-function layoutsKey(userType: UserType) {
-  return `financial-dashboard-layouts-${userType}`
+type LayoutItem = {
+  i: string
+  x: number
+  y: number
+  w: number
+  h: number
+  minW?: number
+  minH?: number
 }
-
-type LayoutItem = { i: string; x: number; y: number; w: number; h: number; minW?: number; minH?: number }
 
 const defaultLayouts: ResponsiveLayouts = {
   lg: [
@@ -33,6 +33,8 @@ const defaultLayouts: ResponsiveLayouts = {
     { i: 'allocation', x: 0, y: 8, w: 6, h: 3, minW: 2, minH: 3 },
   ],
 }
+
+// --- Layout utility functions ---
 
 function getMinSizes(id: string) {
   const isSummary = id === 'summary'
@@ -63,7 +65,12 @@ function getDefaultItemForWidget(id: string): LayoutItem {
 
 const BREAKPOINT_COLS: Record<string, number> = { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }
 
-function findAvailablePosition(existing: LayoutItem[], w: number, h: number, cols: number): { x: number; y: number } {
+function findAvailablePosition(
+  existing: LayoutItem[],
+  w: number,
+  h: number,
+  cols: number,
+): { x: number; y: number } {
   const maxY = existing.reduce((max, item) => Math.max(max, item.y + item.h), 0)
   const gridHeight = maxY + h + 1
   const occupied: boolean[][] = Array.from({ length: gridHeight }, () => Array(cols).fill(false))
@@ -107,37 +114,20 @@ function injectWidgetIntoLayouts(
   return result
 }
 
-function loadUserType(): UserType {
-  const stored = localStorage.getItem(USER_TYPE_KEY)
-  if (stored === 'front-office' || stored === 'back-office') return stored
-  return 'front-office'
-}
+// --- Store types ---
 
-function loadLayouts(userType: UserType): ResponsiveLayouts {
-  try {
-    const version = Number(localStorage.getItem(LAYOUTS_VERSION_KEY) ?? 0)
-    if (version < CURRENT_LAYOUT_VERSION) {
-      localStorage.removeItem(layoutsKey('front-office'))
-      localStorage.removeItem(layoutsKey('back-office'))
-      localStorage.setItem(LAYOUTS_VERSION_KEY, String(CURRENT_LAYOUT_VERSION))
-      return defaultLayouts
-    }
-    const stored = localStorage.getItem(layoutsKey(userType))
-    if (stored) return ensureMinSizes(JSON.parse(stored))
-  } catch {
-    // fall through to default
-  }
-  return defaultLayouts
-}
-
-interface PortfolioState {
-  portfolios: Portfolio[]
+interface PersistedState {
   selectedPortfolioId: string
   userType: UserType
+  visibleWidgets: string[]
+  userLayouts: Record<UserType, ResponsiveLayouts>
+}
+
+interface PortfolioState extends PersistedState {
+  portfolios: Portfolio[]
   layouts: ResponsiveLayouts
   poppedOutWidgets: string[]
   savedWidgetItems: Record<string, LayoutItem>
-  visibleWidgets: string[]
   isLoading: boolean
   selectPortfolio: (id: string) => void
   switchUserType: (userType: UserType) => void
@@ -149,108 +139,162 @@ interface PortfolioState {
   toggleWidget: (id: string) => void
 }
 
-const initialUserType = loadUserType()
+// --- Store ---
 
-export const usePortfolioStore = create<PortfolioState>((set) => ({
-  portfolios: mockPortfolios,
-  selectedPortfolioId: localStorage.getItem(SELECTED_PORTFOLIO_KEY) ?? mockPortfolios[0].id,
-  userType: initialUserType,
-  layouts: loadLayouts(initialUserType),
-  poppedOutWidgets: [],
-  savedWidgetItems: {},
-  visibleWidgets: ['summary', 'news', 'allocation'],
-  isLoading: true,
-  selectPortfolio: (id) => {
-    localStorage.setItem(SELECTED_PORTFOLIO_KEY, id)
-    set({ selectedPortfolioId: id })
-  },
-  switchUserType: (userType) => {
-    // Save current layout under current user type before switching
-    const state = usePortfolioStore.getState()
-    localStorage.setItem(layoutsKey(state.userType), JSON.stringify(state.layouts))
-    localStorage.setItem(USER_TYPE_KEY, userType)
+export const usePortfolioStore = create<PortfolioState>()(
+  persist(
+    (set) => ({
+      // Persisted state
+      selectedPortfolioId: mockPortfolios[0].id,
+      userType: 'front-office' as UserType,
+      visibleWidgets: ['summary', 'news', 'allocation'],
+      userLayouts: {
+        'front-office': defaultLayouts,
+        'back-office': defaultLayouts,
+      },
 
-    // Load the target user type's layout
-    const newLayouts = loadLayouts(userType)
-    set({
-      userType,
-      layouts: newLayouts,
+      // Derived from persisted (set during rehydration via onRehydrateStorage)
+      layouts: defaultLayouts,
+
+      // Non-persisted (reset on refresh)
+      portfolios: mockPortfolios,
       poppedOutWidgets: [],
       savedWidgetItems: {},
-    })
-  },
-  updatePortfolios: (portfolios) => set({ portfolios }),
-  updateLayouts: (layouts) => {
-    const state = usePortfolioStore.getState()
-    let fullLayouts = layouts
-    for (const [id, savedItem] of Object.entries(state.savedWidgetItems)) {
-      fullLayouts = injectWidgetIntoLayouts(fullLayouts, id, savedItem)
-    }
-    localStorage.setItem(layoutsKey(state.userType), JSON.stringify(fullLayouts))
-    set({ layouts })
-  },
-  setLoading: (loading) => set({ isLoading: loading }),
+      isLoading: true,
 
-  popOutWidget: (id) =>
-    set((state) => {
-      if (state.poppedOutWidgets.includes(id)) return state
-      const firstBp = Object.keys(state.layouts)[0]
-      const items = (state.layouts[firstBp] ?? []) as LayoutItem[]
-      const widgetItem = items.find((item) => item.i === id) ?? null
+      // Actions
+      selectPortfolio: (id) => set({ selectedPortfolioId: id }),
 
-      return {
-        poppedOutWidgets: [...state.poppedOutWidgets, id],
-        savedWidgetItems: {
-          ...state.savedWidgetItems,
-          ...(widgetItem ? { [id]: widgetItem } : {}),
+      switchUserType: (userType) =>
+        set((state) => {
+          // Save current layouts under current user type, then load target
+          const updatedUserLayouts = {
+            ...state.userLayouts,
+            [state.userType]: state.layouts,
+          }
+          const targetLayouts = ensureMinSizes(updatedUserLayouts[userType] ?? defaultLayouts)
+          return {
+            userType,
+            userLayouts: updatedUserLayouts,
+            layouts: targetLayouts,
+            poppedOutWidgets: [],
+            savedWidgetItems: {},
+          }
+        }),
+
+      updatePortfolios: (portfolios) => set({ portfolios }),
+
+      updateLayouts: (layouts) =>
+        set((state) => {
+          // Re-inject any popped-out/hidden widgets so they're not lost
+          let fullLayouts = layouts
+          for (const [id, savedItem] of Object.entries(state.savedWidgetItems)) {
+            fullLayouts = injectWidgetIntoLayouts(fullLayouts, id, savedItem)
+          }
+          return {
+            layouts,
+            userLayouts: {
+              ...state.userLayouts,
+              [state.userType]: fullLayouts,
+            },
+          }
+        }),
+
+      setLoading: (loading) => set({ isLoading: loading }),
+
+      popOutWidget: (id) =>
+        set((state) => {
+          if (state.poppedOutWidgets.includes(id)) return state
+          const firstBp = Object.keys(state.layouts)[0]
+          const items = (state.layouts[firstBp] ?? []) as LayoutItem[]
+          const widgetItem = items.find((item) => item.i === id) ?? null
+          return {
+            poppedOutWidgets: [...state.poppedOutWidgets, id],
+            savedWidgetItems: {
+              ...state.savedWidgetItems,
+              ...(widgetItem ? { [id]: widgetItem } : {}),
+            },
+          }
+        }),
+
+      popInWidget: (id) =>
+        set((state) => {
+          const savedItem = state.savedWidgetItems[id] ?? null
+          const newLayouts = injectWidgetIntoLayouts(state.layouts, id, savedItem)
+          const remainingSaved = Object.fromEntries(
+            Object.entries(state.savedWidgetItems).filter(([key]) => key !== id),
+          )
+          return {
+            poppedOutWidgets: state.poppedOutWidgets.filter((w) => w !== id),
+            savedWidgetItems: remainingSaved,
+            layouts: newLayouts,
+            userLayouts: {
+              ...state.userLayouts,
+              [state.userType]: newLayouts,
+            },
+          }
+        }),
+
+      toggleWidget: (id) =>
+        set((state) => {
+          const isCurrentlyVisible = state.visibleWidgets.includes(id)
+
+          if (isCurrentlyVisible) {
+            const firstBp = Object.keys(state.layouts)[0]
+            const items = (state.layouts[firstBp] ?? []) as LayoutItem[]
+            const widgetItem = items.find((item) => item.i === id) ?? null
+            return {
+              visibleWidgets: state.visibleWidgets.filter((w) => w !== id),
+              poppedOutWidgets: state.poppedOutWidgets.filter((w) => w !== id),
+              savedWidgetItems: {
+                ...state.savedWidgetItems,
+                ...(widgetItem ? { [id]: widgetItem } : {}),
+              },
+            }
+          } else {
+            const savedItem = state.savedWidgetItems[id] ?? null
+            const newLayouts = injectWidgetIntoLayouts(state.layouts, id, savedItem)
+            const remainingToggled = Object.fromEntries(
+              Object.entries(state.savedWidgetItems).filter(([key]) => key !== id),
+            )
+            return {
+              visibleWidgets: [...state.visibleWidgets, id],
+              savedWidgetItems: remainingToggled,
+              layouts: newLayouts,
+              userLayouts: {
+                ...state.userLayouts,
+                [state.userType]: newLayouts,
+              },
+            }
+          }
+        }),
+    }),
+    {
+      name: 'financial-dashboard',
+      version: 6,
+      // Only persist these fields — portfolios, poppedOutWidgets, etc. reset on refresh
+      partialize: (state) => ({
+        selectedPortfolioId: state.selectedPortfolioId,
+        userType: state.userType,
+        visibleWidgets: state.visibleWidgets,
+        userLayouts: state.userLayouts,
+      }),
+      // After rehydration, sync `layouts` from the persisted `userLayouts`
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          state.layouts = ensureMinSizes(state.userLayouts[state.userType] ?? defaultLayouts)
+        }
+      },
+      // Migration from older versions — just reset to defaults
+      migrate: () => ({
+        selectedPortfolioId: mockPortfolios[0].id,
+        userType: 'front-office' as UserType,
+        visibleWidgets: ['summary', 'news', 'allocation'],
+        userLayouts: {
+          'front-office': defaultLayouts,
+          'back-office': defaultLayouts,
         },
-      }
-    }),
-
-  popInWidget: (id) =>
-    set((state) => {
-      const savedItem = state.savedWidgetItems[id] ?? null
-      const newLayouts = injectWidgetIntoLayouts(state.layouts, id, savedItem)
-      const remainingSaved = Object.fromEntries(Object.entries(state.savedWidgetItems).filter(([key]) => key !== id))
-
-      localStorage.setItem(layoutsKey(state.userType), JSON.stringify(newLayouts))
-      return {
-        poppedOutWidgets: state.poppedOutWidgets.filter((w) => w !== id),
-        savedWidgetItems: remainingSaved,
-        layouts: newLayouts,
-      }
-    }),
-
-  toggleWidget: (id) =>
-    set((state) => {
-      const isCurrentlyVisible = state.visibleWidgets.includes(id)
-
-      if (isCurrentlyVisible) {
-        const firstBp = Object.keys(state.layouts)[0]
-        const items = (state.layouts[firstBp] ?? []) as LayoutItem[]
-        const widgetItem = items.find((item) => item.i === id) ?? null
-
-        return {
-          visibleWidgets: state.visibleWidgets.filter((w) => w !== id),
-          poppedOutWidgets: state.poppedOutWidgets.filter((w) => w !== id),
-          savedWidgetItems: {
-            ...state.savedWidgetItems,
-            ...(widgetItem ? { [id]: widgetItem } : {}),
-          },
-        }
-      } else {
-        const savedItem = state.savedWidgetItems[id] ?? null
-        const newLayouts = injectWidgetIntoLayouts(state.layouts, id, savedItem)
-        const remainingToggled = Object.fromEntries(
-          Object.entries(state.savedWidgetItems).filter(([key]) => key !== id),
-        )
-
-        localStorage.setItem(layoutsKey(state.userType), JSON.stringify(newLayouts))
-        return {
-          visibleWidgets: [...state.visibleWidgets, id],
-          savedWidgetItems: remainingToggled,
-          layouts: newLayouts,
-        }
-      }
-    }),
-}))
+      }),
+    },
+  ),
+)
