@@ -10,7 +10,7 @@ import { SummaryWidget } from '../widgets/SummaryWidget'
 import { NewsWidget } from '../widgets/NewsWidget'
 import { AllocationWidget } from '../widgets/AllocationWidget'
 import { SummarySkeleton, NewsSkeleton, AllocationSkeleton } from '../ui/Skeleton'
-import { ErrorBoundary } from '../ui/ErrorBoundary'
+import { WidgetErrorBoundary } from '../ui/ErrorBoundary'
 
 const WIDGET_CONFIG = {
   summary: { title: 'Portfolio Summary', accent: '#3b82f6' },
@@ -59,7 +59,7 @@ export function Dashboard() {
         ([id, config]) =>
           isPoppedOut(id) && (
             <PopoutWindow key={id} title={config.title} onClose={handlePopIn(id)}>
-              <ErrorBoundary fallbackTitle={`${config.title} error`}>{widgets[id]}</ErrorBoundary>
+              <WidgetErrorBoundary fallbackTitle={`${config.title} error`}>{widgets[id]}</WidgetErrorBoundary>
             </PopoutWindow>
           ),
       )}
@@ -83,7 +83,7 @@ export function Dashboard() {
           {gridWidgets.map(([id, config]) => (
             <div key={id}>
               <WidgetContainer title={config.title} accentColor={config.accent} onPopOut={handlePopOut(id)}>
-                <ErrorBoundary fallbackTitle={`${config.title} error`}>{widgets[id]}</ErrorBoundary>
+                <WidgetErrorBoundary fallbackTitle={`${config.title} error`}>{widgets[id]}</WidgetErrorBoundary>
               </WidgetContainer>
             </div>
           ))}

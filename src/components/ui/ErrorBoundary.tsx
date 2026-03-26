@@ -1,44 +1,44 @@
-import { Component, type ReactNode, type ErrorInfo } from 'react'
+import { ErrorBoundary as ReactErrorBoundary } from 'react-error-boundary'
+import type { ReactNode } from 'react'
 
-interface Props {
+interface WidgetErrorBoundaryProps {
   children: ReactNode
   fallbackTitle?: string
 }
 
-interface State {
-  hasError: boolean
+function ErrorFallback({ error, resetErrorBoundary, fallbackTitle }: {
+  error: Error
+  resetErrorBoundary: () => void
+  fallbackTitle: string
+}) {
+  return (
+    <div className="h-full flex flex-col items-center justify-center gap-2 text-terminal-muted">
+      <div className="text-terminal-red text-lg">⚠</div>
+      <div className="text-xs">{fallbackTitle}</div>
+      <div className="text-[10px] text-terminal-muted/60 max-w-[200px] text-center truncate">
+        {error.message}
+      </div>
+      <button
+        onClick={resetErrorBoundary}
+        className="text-[10px] px-2 py-0.5 rounded border border-terminal-border hover:bg-terminal-border/30"
+      >
+        Retry
+      </button>
+    </div>
+  )
 }
 
-export class ErrorBoundary extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props)
-    this.state = { hasError: false }
-  }
-
-  static getDerivedStateFromError(): State {
-    return { hasError: true }
-  }
-
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('[Widget Error]', error, errorInfo)
-  }
-
-  render() {
-    if (this.state.hasError) {
-      return (
-        <div className="h-full flex flex-col items-center justify-center gap-2 text-terminal-muted">
-          <div className="text-terminal-red text-lg">⚠</div>
-          <div className="text-xs">{this.props.fallbackTitle || 'Widget failed to load'}</div>
-          <button
-            onClick={() => this.setState({ hasError: false })}
-            className="text-[10px] px-2 py-0.5 rounded border border-terminal-border hover:bg-terminal-border/30"
-          >
-            Retry
-          </button>
-        </div>
-      )
-    }
-
-    return this.props.children
-  }
+export function WidgetErrorBoundary({ children, fallbackTitle = 'Widget failed to load' }: WidgetErrorBoundaryProps) {
+  return (
+    <ReactErrorBoundary
+      fallbackRender={({ error, resetErrorBoundary }) => (
+        <ErrorFallback error={error} resetErrorBoundary={resetErrorBoundary} fallbackTitle={fallbackTitle} />
+      )}
+      onError={(error, info) => {
+        console.error('[Widget Error]', error, info)
+      }}
+    >
+      {children}
+    </ReactErrorBoundary>
+  )
 }
