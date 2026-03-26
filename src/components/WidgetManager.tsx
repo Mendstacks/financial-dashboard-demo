@@ -34,7 +34,7 @@ export function WidgetManager() {
       </button>
 
       {open && (
-        <div className="absolute top-full left-0 mt-1 bg-terminal-surface border border-terminal-border rounded shadow-lg z-50 min-w-[180px]">
+        <div className="absolute top-full left-0 mt-1 bg-terminal-surface border border-terminal-border rounded shadow-lg z-50 min-w-45">
           {ALL_WIDGETS.map((widget) => {
             const isVisible = visibleWidgets.includes(widget.id)
             return (

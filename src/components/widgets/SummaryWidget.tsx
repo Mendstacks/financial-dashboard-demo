@@ -46,7 +46,7 @@ export const SummaryWidget = memo(function SummaryWidget({ summary, holdings, cu
       </div>
 
       {hasPerformance ? (
-        <div className="min-h-[80px] flex-shrink-0 -mx-1">
+        <div className="min-h-20 shrink-0 -mx-1">
           <ResponsiveContainer width="100%" height={80} minWidth={0} minHeight={0}>
             <LineChart data={summary.performanceData}>
               <YAxis domain={['dataMin', 'dataMax']} hide />
@@ -67,7 +67,7 @@ export const SummaryWidget = memo(function SummaryWidget({ summary, holdings, cu
           </ResponsiveContainer>
         </div>
       ) : (
-        <div className="min-h-[40px] flex items-center justify-center text-[10px] text-terminal-muted border border-dashed border-terminal-border rounded">
+        <div className="min-h-10 flex items-center justify-center text-[10px] text-terminal-muted border border-dashed border-terminal-border rounded">
           No performance data available
         </div>
       )}

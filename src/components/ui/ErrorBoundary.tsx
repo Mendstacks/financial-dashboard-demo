@@ -6,21 +6,24 @@ interface WidgetErrorBoundaryProps {
   fallbackTitle?: string
 }
 
-function ErrorFallback({ error, resetErrorBoundary, fallbackTitle }: {
-  error: Error
+function ErrorFallback({
+  error,
+  resetErrorBoundary,
+  fallbackTitle,
+}: {
+  error: unknown
   resetErrorBoundary: () => void
   fallbackTitle: string
 }) {
+  const message = error instanceof Error ? error.message : 'Unknown error'
   return (
     <div className="h-full flex flex-col items-center justify-center gap-2 text-terminal-muted">
       <div className="text-terminal-red text-lg">⚠</div>
       <div className="text-xs">{fallbackTitle}</div>
-      <div className="text-[10px] text-terminal-muted/60 max-w-[200px] text-center truncate">
-        {error.message}
-      </div>
+      <div className="text-[10px] text-terminal-muted/60 max-w-50 text-center truncate">{message}</div>
       <button
         onClick={resetErrorBoundary}
-        className="text-[10px] px-2 py-0.5 rounded border border-terminal-border hover:bg-terminal-border/30"
+        className="cursor-pointer text-[10px] px-2 py-0.5 rounded border border-terminal-border hover:bg-terminal-border/30"
       >
         Retry
       </button>

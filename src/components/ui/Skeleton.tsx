@@ -6,7 +6,7 @@ const CHART_BAR_HEIGHTS = [45, 72, 38, 65, 50, 80, 42, 68, 55, 75, 35, 60, 48, 7
 
 export function SkeletonChart() {
   return (
-    <div className="flex-1 flex items-end gap-1 px-2 min-h-[120px]">
+    <div className="flex-1 flex items-end gap-1 px-2 min-h-30">
       {CHART_BAR_HEIGHTS.map((h, i) => (
         <div
           key={i}

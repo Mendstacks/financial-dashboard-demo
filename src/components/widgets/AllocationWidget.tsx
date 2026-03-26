@@ -14,16 +14,14 @@ const SEGMENTS = [
 ]
 
 export const AllocationWidget = memo(function AllocationWidget({ allocation }: AllocationWidgetProps) {
-  const data = SEGMENTS
-    .map((s) => ({
-      name: s.label,
-      value: allocation[s.key],
-      fill: s.color,
-    }))
-    .filter((d) => d.value > 0)
+  const data = SEGMENTS.map((s) => ({
+    name: s.label,
+    value: allocation[s.key],
+    fill: s.color,
+  })).filter((d) => d.value > 0)
 
   return (
-    <div className="h-full flex flex-col min-h-[180px]">
+    <div className="h-full flex flex-col min-h-45">
       <div className="flex-1">
         <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
           <PieChart>
