@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { usePortfolioStore } from '../store/usePortfolioStore'
 import { extraNewsPool } from '../data/mockData'
-import { roundAllocation } from '../utils/format'
+import { computePortfolioAggregates } from '../utils/format'
 
 export function useMockRealtime(intervalMs: number = 7000) {
   const updatePortfolios = usePortfolioStore((s) => s.updatePortfolios)
@@ -26,25 +26,15 @@ export function useMockRealtime(intervalMs: number = 7000) {
           return { ...h, lastPrice: newPrice, position: newPosition, pnl: newPnl, pnlPercent: newPnlPercent }
         })
 
-        // Recompute portfolio-level values
-        const totalValue = updatedHoldings.reduce((sum, h) => sum + h.position, 0)
-        const todayGainLoss = updatedHoldings.filter((h) => h.assetClass !== 'Cash').reduce((sum, h) => sum + h.pnl, 0)
-        const todayGainLossPercent = totalValue > 0 ? (todayGainLoss / (totalValue - todayGainLoss)) * 100 : 0
-
         // Recompute weights
+        const totalValue = updatedHoldings.reduce((sum, h) => sum + h.position, 0)
         const holdingsWithWeights = updatedHoldings.map((h) => ({
           ...h,
           weight: totalValue > 0 ? h.position / totalValue : 0,
         }))
 
-        // Recompute allocation
-        const equityWeight = holdingsWithWeights
-          .filter((h) => h.assetClass === 'Equity')
-          .reduce((s, h) => s + h.weight, 0)
-        const bondWeight = holdingsWithWeights
-          .filter((h) => h.assetClass === 'Fixed Income')
-          .reduce((s, h) => s + h.weight, 0)
-        const cashWeight = holdingsWithWeights.filter((h) => h.assetClass === 'Cash').reduce((s, h) => s + h.weight, 0)
+        // Recompute portfolio-level aggregates
+        const aggregates = computePortfolioAggregates(holdingsWithWeights)
 
         // Rotate news (30% chance)
         let news = [...portfolio.news]
@@ -69,11 +59,11 @@ export function useMockRealtime(intervalMs: number = 7000) {
           holdings: holdingsWithWeights,
           summary: {
             ...portfolio.summary,
-            totalValue: Math.round(totalValue * 100) / 100,
-            todayGainLoss: Math.round(todayGainLoss * 100) / 100,
-            todayGainLossPercent: Math.round(todayGainLossPercent * 10000) / 10000,
+            totalValue: aggregates.totalValue,
+            todayGainLoss: aggregates.todayGainLoss,
+            todayGainLossPercent: aggregates.todayGainLossPercent,
           },
-          allocation: roundAllocation(equityWeight, bondWeight, cashWeight),
+          allocation: aggregates.allocation,
           news,
         }
       })

@@ -1,6 +1,6 @@
 import type { Portfolio, Holding, NewsItem, PerformancePoint } from '../types/portfolio'
 import { portfolios, portfolioHoldings, portfolioNews, portfolioPerformance } from './clientMockData'
-import { roundAllocation } from '../utils/format'
+import { computePortfolioAggregates } from '../utils/format'
 
 function transformToPortfolios(): Portfolio[] {
   return portfolios.map((raw) => {
@@ -30,14 +30,7 @@ function transformToPortfolios(): Portfolio[] {
         }
       })
 
-    const totalValue = holdings.reduce((sum, h) => sum + h.position, 0)
-    const todayGainLoss = holdings.filter((h) => h.assetClass !== 'Cash').reduce((sum, h) => sum + h.pnl, 0)
-    const todayGainLossPercent = totalValue > 0 ? (todayGainLoss / (totalValue - todayGainLoss)) * 100 : 0
-
-    // Derive allocation from holdings by assetClass
-    const equityWeight = holdings.filter((h) => h.assetClass === 'Equity').reduce((s, h) => s + h.weight, 0)
-    const bondWeight = holdings.filter((h) => h.assetClass === 'Fixed Income').reduce((s, h) => s + h.weight, 0)
-    const cashWeight = holdings.filter((h) => h.assetClass === 'Cash').reduce((s, h) => s + h.weight, 0)
+    const { totalValue, todayGainLoss, todayGainLossPercent, allocation } = computePortfolioAggregates(holdings)
 
     const news: NewsItem[] = portfolioNews
       .filter((n) => n.portfolioId === raw.portfolioId)
@@ -69,13 +62,13 @@ function transformToPortfolios(): Portfolio[] {
       currency: raw.currency,
       cash: raw.cash,
       summary: {
-        totalValue: Math.round(totalValue * 100) / 100,
-        todayGainLoss: Math.round(todayGainLoss * 100) / 100,
-        todayGainLossPercent: Math.round(todayGainLossPercent * 10000) / 10000,
+        totalValue,
+        todayGainLoss,
+        todayGainLossPercent,
         performanceData,
       },
       holdings,
-      allocation: roundAllocation(equityWeight, bondWeight, cashWeight),
+      allocation,
       news,
     }
   })

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useEffectEvent, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 
 interface PopoutWindowProps {
@@ -14,12 +14,8 @@ export function PopoutWindow({ title, children, onClose, width = 600, height = 4
   const [blocked, setBlocked] = useState(false)
   const windowRef = useRef<Window | null>(null)
   const unmountedRef = useRef(false)
-  const onCloseRef = useRef(onClose)
+  const onCloseStable = useEffectEvent(onClose)
   const cleanupRef = useRef<(() => void) | null>(null)
-
-  useEffect(() => {
-    onCloseRef.current = onClose
-  }, [onClose])
 
   useEffect(() => {
     if (windowRef.current && !windowRef.current.closed) return
@@ -67,7 +63,7 @@ export function PopoutWindow({ title, children, onClose, width = 600, height = 4
         unmountedRef.current = true
         clearInterval(pollInterval)
         windowRef.current = null
-        onCloseRef.current()
+        onCloseStable()
       }
     }, 500)
 
@@ -100,7 +96,7 @@ export function PopoutWindow({ title, children, onClose, width = 600, height = 4
           <button
             onClick={() => {
               setBlocked(false)
-              onCloseRef.current()
+              onCloseStable()
             }}
             className="w-full py-1.5 text-xs font-medium bg-terminal-blue/20 text-terminal-blue border border-terminal-blue/40 rounded hover:bg-terminal-blue/30"
           >

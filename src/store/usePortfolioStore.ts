@@ -17,13 +17,13 @@ interface PersistedState {
   userType: UserType
   visibleWidgets: string[]
   userLayouts: Record<UserType, ResponsiveLayouts>
+  poppedOutWidgets: string[]
+  savedWidgetItems: Record<string, LayoutItem>
 }
 
 interface PortfolioState extends PersistedState {
   portfolios: Portfolio[]
   layouts: ResponsiveLayouts
-  poppedOutWidgets: string[]
-  savedWidgetItems: Record<string, LayoutItem>
   isLoading: boolean
   selectPortfolio: (id: string) => void
   switchUserType: (userType: UserType) => void
@@ -47,13 +47,14 @@ export const usePortfolioStore = create<PortfolioState>()(
         'back-office': defaultLayouts,
       },
 
+      poppedOutWidgets: [],
+      savedWidgetItems: {},
+
       // Derived from persisted (synced via onRehydrateStorage)
       layouts: defaultLayouts,
 
-      // Non-persisted (reset on refresh)
+      // Non-persisted
       portfolios: mockPortfolios,
-      poppedOutWidgets: [],
-      savedWidgetItems: {},
       isLoading: true,
 
       // Actions
@@ -163,12 +164,14 @@ export const usePortfolioStore = create<PortfolioState>()(
     }),
     {
       name: 'financial-dashboard',
-      version: 6,
+      version: 7,
       partialize: (state) => ({
         selectedPortfolioId: state.selectedPortfolioId,
         userType: state.userType,
         visibleWidgets: state.visibleWidgets,
         userLayouts: state.userLayouts,
+        poppedOutWidgets: state.poppedOutWidgets,
+        savedWidgetItems: state.savedWidgetItems,
       }),
       onRehydrateStorage: () => (state) => {
         if (state) {
@@ -183,6 +186,8 @@ export const usePortfolioStore = create<PortfolioState>()(
           'front-office': defaultLayouts,
           'back-office': defaultLayouts,
         },
+        poppedOutWidgets: [],
+        savedWidgetItems: {},
       }),
     },
   ),
