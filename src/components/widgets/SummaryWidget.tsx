@@ -1,4 +1,3 @@
-import { memo } from 'react'
 import { LineChart, Line, ResponsiveContainer, Tooltip, YAxis } from 'recharts'
 import type { PortfolioSummary, Holding } from '../../types/portfolio'
 import { formatCurrency, formatPercent, formatCompact, TOOLTIP_STYLE } from '../../utils/format'
@@ -9,7 +8,7 @@ interface SummaryWidgetProps {
   currency: string
 }
 
-export const SummaryWidget = memo(function SummaryWidget({ summary, holdings, currency }: SummaryWidgetProps) {
+export function SummaryWidget({ summary, holdings, currency }: SummaryWidgetProps) {
   const isPositive = summary.todayGainLoss >= 0
   const hasPerformance = summary.performanceData.length > 0
 
@@ -102,4 +101,4 @@ export const SummaryWidget = memo(function SummaryWidget({ summary, holdings, cu
       )}
     </div>
   )
-})
+}

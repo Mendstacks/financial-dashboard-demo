@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { PortfolioSelector } from './components/PortfolioSelector'
 import { WidgetManager } from './components/WidgetManager'
 import { UserTypeSelector } from './components/UserTypeSelector'
@@ -19,6 +19,12 @@ function App() {
   const portfolios = usePortfolioStore((s) => s.portfolios)
   const selectedId = usePortfolioStore((s) => s.selectedPortfolioId)
   const portfolio = portfolios.find((p) => p.id === selectedId)
+
+  const [now, setNow] = useState(() => new Date())
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 1000)
+    return () => clearInterval(id)
+  }, [])
 
   const isPositive = portfolio ? portfolio.summary.todayGainLoss >= 0 : true
 
@@ -52,7 +58,7 @@ function App() {
         </div>
         <div className="flex items-center gap-3">
           <div className="text-xs text-terminal-text tabular-nums font-mono">
-            {new Date().toLocaleDateString('en-US', {
+            {now.toLocaleDateString('en-US', {
               weekday: 'short',
               year: 'numeric',
               month: 'short',
@@ -71,7 +77,7 @@ function App() {
 
       <footer className="flex items-center justify-between px-4 py-1 border-t border-terminal-border text-[10px] text-terminal-text/70 tabular-nums font-mono bg-terminal-surface">
         <span>Real-time simulation active</span>
-        <span>Last update: {new Date().toLocaleTimeString()}</span>
+        <span>Last update: {now.toLocaleTimeString()}</span>
       </footer>
     </div>
   )

@@ -1,4 +1,3 @@
-import { memo } from 'react'
 import type { NewsItem } from '../../types/portfolio'
 
 interface NewsWidgetProps {
@@ -19,7 +18,7 @@ function timeAgo(timestamp: string): string {
   return 'now'
 }
 
-export const NewsWidget = memo(function NewsWidget({ news }: NewsWidgetProps) {
+export function NewsWidget({ news }: NewsWidgetProps) {
   return (
     <div className="flex flex-col h-full">
       {news.map((item, index) => (
@@ -51,4 +50,4 @@ export const NewsWidget = memo(function NewsWidget({ news }: NewsWidgetProps) {
       ))}
     </div>
   )
-})
+}

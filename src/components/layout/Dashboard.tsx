@@ -1,4 +1,4 @@
-import { useCallback, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { Responsive, useContainerWidth } from 'react-grid-layout'
 import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
@@ -32,9 +32,8 @@ export function Dashboard() {
 
   const portfolio = portfolios.find((p) => p.id === selectedId)
 
-  const handlePopIn = useCallback((id: string) => () => popInWidget(id), [popInWidget])
-
-  const handlePopOut = useCallback((id: string) => () => popOutWidget(id), [popOutWidget])
+  const handlePopIn = (id: string) => () => popInWidget(id)
+  const handlePopOut = (id: string) => () => popOutWidget(id)
 
   if (!portfolio) return null
 
@@ -53,7 +52,7 @@ export function Dashboard() {
   const gridWidgets = Object.entries(WIDGET_CONFIG).filter(([id]) => !isPoppedOut(id) && visibleWidgets.includes(id))
 
   return (
-    <div ref={containerRef} className="flex-1 test">
+    <div ref={containerRef} className="flex-1">
       {/* Popped-out windows */}
       {Object.entries(WIDGET_CONFIG).map(
         ([id, config]) =>
