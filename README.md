@@ -2,6 +2,16 @@
 
 Bloomberg-style multi-portfolio management dashboard built with React, TypeScript, and Electron.
 
+## Table of Contents
+
+- [Prerequisites](#prerequisites)
+- [Setup](#setup)
+- [Development](#development)
+- [Build](#build)
+- [Tech Stack](#tech-stack)
+- [Features](#features)
+- [Project Structure](#project-structure)
+
 ## Prerequisites
 
 - [Node.js](https://nodejs.org/) v20+ or v22+
