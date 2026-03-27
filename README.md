@@ -18,6 +18,7 @@ https://financial-dashboard-demo-eight.vercel.app/
 - [Tech Stack](#tech-stack)
 - [Features](#features)
 - [Project Structure](#project-structure)
+- [Screenshot/gif](#screenshotgif)
 
 ## Prerequisites
 
@@ -113,6 +114,6 @@ electron/
   preload.ts         Secure context bridge
 ```
 
-## Demo
-![Demo](https://github.com/user-attachments/assets/b31c50c5-f019-4756-affe-c528da9ed60a)
+## Screenshot/gif
+![gif](https://github.com/user-attachments/assets/b31c50c5-f019-4756-affe-c528da9ed60a)
 
