@@ -96,7 +96,7 @@ export function PopoutWindow({ title, children, onClose, width = 600, height = 4
           <button
             onClick={() => {
               setBlocked(false)
-              onCloseStable()
+              onClose()
             }}
             className="w-full py-1.5 text-xs font-medium bg-terminal-blue/20 text-terminal-blue border border-terminal-blue/40 rounded hover:bg-terminal-blue/30"
           >
@@ -110,10 +110,9 @@ export function PopoutWindow({ title, children, onClose, width = 600, height = 4
   if (!container) return null
 
   return createPortal(
-    <div className="h-screen bg-terminal-bg text-terminal-text flex flex-col">
+    <div className="h-screen bg-terminal-bg text-terminal-text flex flex-col border border-terminal-border">
       <div className="flex items-center justify-between px-3 py-2 bg-terminal-surface border-b border-terminal-border">
         <span className="text-[11px] font-bold uppercase tracking-wider text-terminal-text">{title}</span>
-        <span className="text-[10px] text-terminal-muted">Pop-out</span>
       </div>
       <div className="flex-1 p-3 overflow-auto">{children}</div>
     </div>,
