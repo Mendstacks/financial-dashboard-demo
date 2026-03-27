@@ -3225,4 +3225,52 @@ export const portfolioPerformance = [
     qtdChange: 1.5357,
     ytdChange: 1.5357,
   },
+  // ==============================
+  // PORTFOLIO 2 - ASIA INCOME (1 Year)
+  // ==============================
+  // March 2025
+  { portfolioId: 2, cobDate: '2025-03-17', nav: 9800000, normalizedNav: 100, dtdChange: 0, mtdChange: 0, qtdChange: 0, ytdChange: 0 },
+  { portfolioId: 2, cobDate: '2025-03-18', nav: 9815000, normalizedNav: 100.15, dtdChange: 0.0015, mtdChange: 0.0015, qtdChange: 0.0015, ytdChange: 0.0015 },
+  { portfolioId: 2, cobDate: '2025-03-19', nav: 9790000, normalizedNav: 99.9, dtdChange: -0.0025, mtdChange: -0.001, qtdChange: -0.001, ytdChange: -0.001 },
+  { portfolioId: 2, cobDate: '2025-03-20', nav: 9825000, normalizedNav: 100.26, dtdChange: 0.0036, mtdChange: 0.0026, qtdChange: 0.0026, ytdChange: 0.0026 },
+  { portfolioId: 2, cobDate: '2025-03-21', nav: 9840000, normalizedNav: 100.41, dtdChange: 0.0015, mtdChange: 0.0041, qtdChange: 0.0041, ytdChange: 0.0041 },
+  { portfolioId: 2, cobDate: '2025-03-24', nav: 9860000, normalizedNav: 100.61, dtdChange: 0.002, mtdChange: 0.0061, qtdChange: 0.0061, ytdChange: 0.0061 },
+  { portfolioId: 2, cobDate: '2025-03-31', nav: 9900000, normalizedNav: 101.02, dtdChange: 0.0041, mtdChange: 0.0102, qtdChange: 0.0102, ytdChange: 0.0102 },
+  // April 2025
+  { portfolioId: 2, cobDate: '2025-04-07', nav: 9880000, normalizedNav: 100.82, dtdChange: -0.002, mtdChange: -0.002, qtdChange: 0.0082, ytdChange: 0.0082 },
+  { portfolioId: 2, cobDate: '2025-04-14', nav: 9920000, normalizedNav: 101.22, dtdChange: 0.004, mtdChange: 0.002, qtdChange: 0.0122, ytdChange: 0.0122 },
+  { portfolioId: 2, cobDate: '2025-04-21', nav: 9950000, normalizedNav: 101.53, dtdChange: 0.003, mtdChange: 0.0051, qtdChange: 0.0153, ytdChange: 0.0153 },
+  { portfolioId: 2, cobDate: '2025-04-30', nav: 9970000, normalizedNav: 101.73, dtdChange: 0.002, mtdChange: 0.0071, qtdChange: 0.0173, ytdChange: 0.0173 },
+  // May 2025
+  { portfolioId: 2, cobDate: '2025-05-12', nav: 10010000, normalizedNav: 102.14, dtdChange: 0.004, mtdChange: 0.004, qtdChange: 0.0214, ytdChange: 0.0214 },
+  { portfolioId: 2, cobDate: '2025-05-19', nav: 9980000, normalizedNav: 101.84, dtdChange: -0.003, mtdChange: 0.001, qtdChange: 0.0184, ytdChange: 0.0184 },
+  { portfolioId: 2, cobDate: '2025-05-30', nav: 10050000, normalizedNav: 102.55, dtdChange: 0.007, mtdChange: 0.008, qtdChange: 0.0255, ytdChange: 0.0255 },
+  // June 2025
+  { portfolioId: 2, cobDate: '2025-06-09', nav: 10020000, normalizedNav: 102.24, dtdChange: -0.003, mtdChange: -0.003, qtdChange: 0.0224, ytdChange: 0.0224 },
+  { portfolioId: 2, cobDate: '2025-06-16', nav: 10080000, normalizedNav: 102.86, dtdChange: 0.006, mtdChange: 0.003, qtdChange: 0.0286, ytdChange: 0.0286 },
+  { portfolioId: 2, cobDate: '2025-06-30', nav: 10120000, normalizedNav: 103.27, dtdChange: 0.004, mtdChange: 0.007, qtdChange: 0.0327, ytdChange: 0.0327 },
+  // July 2025
+  { portfolioId: 2, cobDate: '2025-07-14', nav: 10100000, normalizedNav: 103.06, dtdChange: -0.002, mtdChange: -0.002, qtdChange: -0.002, ytdChange: 0.0306 },
+  { portfolioId: 2, cobDate: '2025-07-28', nav: 10180000, normalizedNav: 103.88, dtdChange: 0.008, mtdChange: 0.006, qtdChange: 0.006, ytdChange: 0.0388 },
+  { portfolioId: 2, cobDate: '2025-07-31', nav: 10200000, normalizedNav: 104.08, dtdChange: 0.002, mtdChange: 0.008, qtdChange: 0.008, ytdChange: 0.0408 },
+  // August 2025
+  { portfolioId: 2, cobDate: '2025-08-11', nav: 10170000, normalizedNav: 103.78, dtdChange: -0.003, mtdChange: -0.003, qtdChange: 0.005, ytdChange: 0.0378 },
+  { portfolioId: 2, cobDate: '2025-08-25', nav: 10250000, normalizedNav: 104.59, dtdChange: 0.008, mtdChange: 0.005, qtdChange: 0.013, ytdChange: 0.0459 },
+  { portfolioId: 2, cobDate: '2025-08-29', nav: 10280000, normalizedNav: 104.9, dtdChange: 0.003, mtdChange: 0.008, qtdChange: 0.016, ytdChange: 0.049 },
+  // September 2025
+  { portfolioId: 2, cobDate: '2025-09-08', nav: 10240000, normalizedNav: 104.49, dtdChange: -0.004, mtdChange: -0.004, qtdChange: 0.012, ytdChange: 0.0449 },
+  { portfolioId: 2, cobDate: '2025-09-22', nav: 10310000, normalizedNav: 105.2, dtdChange: 0.007, mtdChange: 0.003, qtdChange: 0.019, ytdChange: 0.052 },
+  { portfolioId: 2, cobDate: '2025-09-30', nav: 10350000, normalizedNav: 105.61, dtdChange: 0.004, mtdChange: 0.007, qtdChange: 0.023, ytdChange: 0.0561 },
+  // October 2025
+  { portfolioId: 2, cobDate: '2025-10-13', nav: 10320000, normalizedNav: 105.31, dtdChange: -0.003, mtdChange: -0.003, qtdChange: -0.003, ytdChange: 0.0531 },
+  { portfolioId: 2, cobDate: '2025-10-27', nav: 10400000, normalizedNav: 106.12, dtdChange: 0.008, mtdChange: 0.005, qtdChange: 0.005, ytdChange: 0.0612 },
+  { portfolioId: 2, cobDate: '2025-10-31', nav: 10420000, normalizedNav: 106.33, dtdChange: 0.002, mtdChange: 0.007, qtdChange: 0.007, ytdChange: 0.0633 },
+  // November 2025
+  { portfolioId: 2, cobDate: '2025-11-10', nav: 10380000, normalizedNav: 105.92, dtdChange: -0.004, mtdChange: -0.004, qtdChange: 0.003, ytdChange: 0.0592 },
+  { portfolioId: 2, cobDate: '2025-11-24', nav: 10470000, normalizedNav: 106.84, dtdChange: 0.009, mtdChange: 0.005, qtdChange: 0.012, ytdChange: 0.0684 },
+  { portfolioId: 2, cobDate: '2025-11-28', nav: 10500000, normalizedNav: 107.14, dtdChange: 0.003, mtdChange: 0.008, qtdChange: 0.015, ytdChange: 0.0714 },
+  // December 2025
+  { portfolioId: 2, cobDate: '2025-12-08', nav: 10460000, normalizedNav: 106.73, dtdChange: -0.004, mtdChange: -0.004, qtdChange: 0.011, ytdChange: 0.0673 },
+  { portfolioId: 2, cobDate: '2025-12-22', nav: 10550000, normalizedNav: 107.65, dtdChange: 0.009, mtdChange: 0.005, qtdChange: 0.02, ytdChange: 0.0765 },
+  { portfolioId: 2, cobDate: '2025-12-31', nav: 10590000, normalizedNav: 108.06, dtdChange: 0.004, mtdChange: 0.009, qtdChange: 0.024, ytdChange: 0.0806 },
 ]
