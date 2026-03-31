@@ -22,7 +22,6 @@ export function Dashboard() {
   const popOutWidget = usePortfolioStore((s) => s.popOutWidget)
   const popInWidget = usePortfolioStore((s) => s.popInWidget)
   const removeWidgetInstance = usePortfolioStore((s) => s.removeWidgetInstance)
-  const renameWidgetInstance = usePortfolioStore((s) => s.renameWidgetInstance)
   const duplicateWidgetInstance = usePortfolioStore((s) => s.duplicateWidgetInstance)
   const lastAddedInstanceId = usePortfolioStore((s) => s.lastAddedInstanceId)
   const clearLastAdded = usePortfolioStore((s) => s.clearLastAdded)
@@ -69,7 +68,6 @@ export function Dashboard() {
               accentColor={entry.accent}
               onPopIn={() => popInWidget(inst.instanceId)}
               onRemove={() => removeWidgetInstance(inst.instanceId)}
-              onRename={(newTitle) => renameWidgetInstance(inst.instanceId, newTitle)}
               onDuplicate={() => duplicateWidgetInstance(inst.instanceId)}
             />
             <div className="flex-1 p-3 overflow-auto">
@@ -107,7 +105,6 @@ export function Dashboard() {
                   accentColor={entry.accent}
                   onPopOut={() => popOutWidget(inst.instanceId)}
                   onRemove={() => removeWidgetInstance(inst.instanceId)}
-                  onRename={(newTitle) => renameWidgetInstance(inst.instanceId, newTitle)}
                   onDuplicate={() => duplicateWidgetInstance(inst.instanceId)}
                 >
                   <WidgetErrorBoundary fallbackTitle={`${inst.title} error`}>

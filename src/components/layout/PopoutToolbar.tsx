@@ -1,18 +1,15 @@
 import { useState, useRef, useEffect } from 'react'
-import { PopInIcon, MoreIcon, RenameIcon, DuplicateIcon, RemoveIcon } from '../ui/Icons'
+import { PopInIcon, MoreIcon, DuplicateIcon, RemoveIcon } from '../ui/Icons'
 
 interface PopoutToolbarProps {
   accentColor: string
   onPopIn: () => void
   onRemove: () => void
-  onRename: (newTitle: string) => void
   onDuplicate: () => void
 }
 
-export function PopoutToolbar({ accentColor, onPopIn, onRemove, onRename, onDuplicate }: PopoutToolbarProps) {
+export function PopoutToolbar({ accentColor, onPopIn, onRemove, onDuplicate }: PopoutToolbarProps) {
   const [menuOpen, setMenuOpen] = useState(false)
-  const [isRenaming, setIsRenaming] = useState(false)
-  const [renameValue, setRenameValue] = useState('')
   const menuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -26,30 +23,10 @@ export function PopoutToolbar({ accentColor, onPopIn, onRemove, onRename, onDupl
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [menuOpen])
 
-  function commitRename() {
-    const trimmed = renameValue.trim()
-    if (trimmed) onRename(trimmed)
-    setIsRenaming(false)
-  }
-
   return (
     <div className="flex items-center justify-between px-3 py-1.5 border-b border-terminal-border/40 bg-terminal-surface/50">
       <div className="flex items-center gap-2">
         <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: accentColor }} />
-        {isRenaming && (
-          <input
-            className="text-[10px] font-medium text-terminal-text bg-terminal-bg border border-terminal-border rounded px-1.5 py-0.5 outline-none focus:border-terminal-blue w-44"
-            value={renameValue}
-            onChange={(e) => setRenameValue(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') commitRename()
-              if (e.key === 'Escape') setIsRenaming(false)
-            }}
-            onBlur={commitRename}
-            autoFocus
-            placeholder="New title..."
-          />
-        )}
       </div>
       <div className="flex items-center gap-1 relative" ref={menuRef}>
         <button
@@ -69,17 +46,6 @@ export function PopoutToolbar({ accentColor, onPopIn, onRemove, onRename, onDupl
 
         {menuOpen && (
           <div className="absolute top-full right-0 mt-1 bg-terminal-surface border border-terminal-border rounded shadow-lg z-50 min-w-36 py-1">
-            <button
-              className="w-full flex items-center gap-2.5 px-3 py-1.5 text-xs text-terminal-text hover:bg-terminal-border/30 text-left"
-              onClick={() => {
-                setMenuOpen(false)
-                setRenameValue('')
-                setIsRenaming(true)
-              }}
-            >
-              <RenameIcon className="w-3 h-3 text-terminal-muted" />
-              Rename
-            </button>
             <button
               className="w-full flex items-center gap-2.5 px-3 py-1.5 text-xs text-terminal-text hover:bg-terminal-border/30 text-left"
               onClick={() => {

@@ -34,14 +34,6 @@ export function MoreIcon({ className = iconClass }: { className?: string }) {
   )
 }
 
-export function RenameIcon({ className = iconClass }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M8.5 2.5l3 3L5 12H2v-3l6.5-6.5z" />
-    </svg>
-  )
-}
-
 export function DuplicateIcon({ className = iconClass }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
