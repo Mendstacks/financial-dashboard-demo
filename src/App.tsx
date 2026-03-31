@@ -30,7 +30,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-terminal-bg text-terminal-text flex flex-col">
-      <header className="flex items-center justify-between px-4 py-2 border-b border-terminal-border bg-terminal-surface/50">
+      <header className="sticky top-0 z-30 flex items-center justify-between px-4 py-2 border-b border-terminal-border bg-terminal-surface/80 backdrop-blur-sm">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-terminal-green animate-pulse" />

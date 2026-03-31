@@ -1,22 +1,14 @@
-import type { ReactNode } from 'react'
+import { useEffect } from 'react'
 import { Responsive, useContainerWidth } from 'react-grid-layout'
 import 'react-grid-layout/css/styles.css'
 import 'react-resizable/css/styles.css'
 
 import { usePortfolioStore } from '../../store/usePortfolioStore'
 import { WidgetContainer } from './WidgetContainer'
+import { PopoutToolbar } from './PopoutToolbar'
 import { PopoutWindow } from './PopoutWindow'
-import { SummaryWidget } from '../widgets/SummaryWidget'
-import { NewsWidget } from '../widgets/NewsWidget'
-import { AllocationWidget } from '../widgets/AllocationWidget'
-import { SummarySkeleton, NewsSkeleton, AllocationSkeleton } from '../ui/Skeleton'
 import { WidgetErrorBoundary } from '../ui/ErrorBoundary'
-
-const WIDGET_CONFIG = {
-  summary: { title: 'Portfolio Summary', accent: '#3b82f6' },
-  news: { title: 'Market News', accent: '#ff6b35' },
-  allocation: { title: 'Asset Allocation', accent: '#00d26a' },
-}
+import { widgetRegistry } from '../../widgets/registry'
 
 export function Dashboard() {
   const { width, containerRef, mounted } = useContainerWidth()
@@ -26,42 +18,68 @@ export function Dashboard() {
   const updateLayouts = usePortfolioStore((s) => s.updateLayouts)
   const isLoading = usePortfolioStore((s) => s.isLoading)
   const poppedOutWidgets = usePortfolioStore((s) => s.poppedOutWidgets)
-  const visibleWidgets = usePortfolioStore((s) => s.visibleWidgets)
+  const widgetInstances = usePortfolioStore((s) => s.widgetInstances)
   const popOutWidget = usePortfolioStore((s) => s.popOutWidget)
   const popInWidget = usePortfolioStore((s) => s.popInWidget)
+  const removeWidgetInstance = usePortfolioStore((s) => s.removeWidgetInstance)
+  const renameWidgetInstance = usePortfolioStore((s) => s.renameWidgetInstance)
+  const duplicateWidgetInstance = usePortfolioStore((s) => s.duplicateWidgetInstance)
+  const lastAddedInstanceId = usePortfolioStore((s) => s.lastAddedInstanceId)
+  const clearLastAdded = usePortfolioStore((s) => s.clearLastAdded)
 
   const portfolio = portfolios.find((p) => p.id === selectedId)
 
-  const handlePopIn = (id: string) => () => popInWidget(id)
-  const handlePopOut = (id: string) => () => popOutWidget(id)
+  // Auto-scroll to newly added widget
+  useEffect(() => {
+    if (!lastAddedInstanceId) return
+    // Small delay to let react-grid-layout render the new item
+    const timer = setTimeout(() => {
+      const el = document.querySelector(`[data-instance-id="${lastAddedInstanceId}"]`)
+      el?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      clearLastAdded()
+    }, 100)
+    return () => clearTimeout(timer)
+  }, [lastAddedInstanceId, clearLastAdded])
 
   if (!portfolio) return null
 
   const isPoppedOut = (id: string) => poppedOutWidgets.includes(id)
 
-  const widgets: Record<string, ReactNode> = {
-    summary: isLoading ? (
-      <SummarySkeleton />
-    ) : (
-      <SummaryWidget summary={portfolio.summary} holdings={portfolio.holdings} currency={portfolio.currency} />
-    ),
-    news: isLoading ? <NewsSkeleton /> : <NewsWidget news={portfolio.news} />,
-    allocation: isLoading ? <AllocationSkeleton /> : <AllocationWidget allocation={portfolio.allocation} />,
-  }
+  const allInstances = Object.values(widgetInstances)
+  const gridInstances = allInstances.filter((inst) => !isPoppedOut(inst.instanceId))
+  const popoutInstances = allInstances.filter((inst) => isPoppedOut(inst.instanceId))
 
-  const gridWidgets = Object.entries(WIDGET_CONFIG).filter(([id]) => !isPoppedOut(id) && visibleWidgets.includes(id))
+  function renderWidget(inst: { instanceId: string; type: string }) {
+    const entry = widgetRegistry[inst.type]
+    if (!entry) return null
+    const Component = isLoading ? entry.skeleton : entry.component
+    const props = isLoading ? {} : entry.resolveProps(portfolio!)
+    return <Component {...props} />
+  }
 
   return (
     <div ref={containerRef} className="flex-1">
       {/* Popped-out windows */}
-      {Object.entries(WIDGET_CONFIG).map(
-        ([id, config]) =>
-          isPoppedOut(id) && (
-            <PopoutWindow key={id} title={config.title} onClose={handlePopIn(id)}>
-              <WidgetErrorBoundary fallbackTitle={`${config.title} error`}>{widgets[id]}</WidgetErrorBoundary>
-            </PopoutWindow>
-          ),
-      )}
+      {popoutInstances.map((inst) => {
+        const entry = widgetRegistry[inst.type]
+        if (!entry) return null
+        return (
+          <PopoutWindow key={inst.instanceId} title={inst.title} onClose={() => popInWidget(inst.instanceId)}>
+            <PopoutToolbar
+              accentColor={entry.accent}
+              onPopIn={() => popInWidget(inst.instanceId)}
+              onRemove={() => removeWidgetInstance(inst.instanceId)}
+              onRename={(newTitle) => renameWidgetInstance(inst.instanceId, newTitle)}
+              onDuplicate={() => duplicateWidgetInstance(inst.instanceId)}
+            />
+            <div className="flex-1 p-3 overflow-auto">
+              <WidgetErrorBoundary fallbackTitle={`${inst.title} error`}>
+                {renderWidget(inst)}
+              </WidgetErrorBoundary>
+            </div>
+          </PopoutWindow>
+        )
+      })}
 
       {/* In-grid widgets */}
       {mounted && (
@@ -79,13 +97,26 @@ export function Dashboard() {
             updateLayouts(allLayouts)
           }}
         >
-          {gridWidgets.map(([id, config]) => (
-            <div key={id}>
-              <WidgetContainer title={config.title} accentColor={config.accent} onPopOut={handlePopOut(id)}>
-                <WidgetErrorBoundary fallbackTitle={`${config.title} error`}>{widgets[id]}</WidgetErrorBoundary>
-              </WidgetContainer>
-            </div>
-          ))}
+          {gridInstances.map((inst) => {
+            const entry = widgetRegistry[inst.type]
+            if (!entry) return null
+            return (
+              <div key={inst.instanceId} data-instance-id={inst.instanceId}>
+                <WidgetContainer
+                  title={inst.title}
+                  accentColor={entry.accent}
+                  onPopOut={() => popOutWidget(inst.instanceId)}
+                  onRemove={() => removeWidgetInstance(inst.instanceId)}
+                  onRename={(newTitle) => renameWidgetInstance(inst.instanceId, newTitle)}
+                  onDuplicate={() => duplicateWidgetInstance(inst.instanceId)}
+                >
+                  <WidgetErrorBoundary fallbackTitle={`${inst.title} error`}>
+                    {renderWidget(inst)}
+                  </WidgetErrorBoundary>
+                </WidgetContainer>
+              </div>
+            )
+          })}
         </Responsive>
       )}
     </div>

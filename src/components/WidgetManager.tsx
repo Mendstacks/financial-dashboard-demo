@@ -1,17 +1,11 @@
 import { useState, useRef, useEffect } from 'react'
 import { usePortfolioStore } from '../store/usePortfolioStore'
-
-const ALL_WIDGETS = [
-  { id: 'summary', label: 'Portfolio Summary' },
-  { id: 'news', label: 'Market News' },
-  { id: 'allocation', label: 'Asset Allocation' },
-]
+import { widgetRegistry } from '../widgets/registry'
 
 export function WidgetManager() {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
-  const visibleWidgets = usePortfolioStore((s) => s.visibleWidgets)
-  const toggleWidget = usePortfolioStore((s) => s.toggleWidget)
+  const addWidgetInstance = usePortfolioStore((s) => s.addWidgetInstance)
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -35,23 +29,17 @@ export function WidgetManager() {
 
       {open && (
         <div className="absolute top-full left-0 mt-1 bg-terminal-surface border border-terminal-border rounded shadow-lg z-50 min-w-45">
-          {ALL_WIDGETS.map((widget) => {
-            const isVisible = visibleWidgets.includes(widget.id)
-            return (
-              <button
-                key={widget.id}
-                onClick={() => toggleWidget(widget.id)}
-                className="w-full flex items-center gap-2 px-3 py-2 text-xs hover:bg-terminal-border/30 text-left"
-              >
-                <div
-                  className={`w-3.5 h-3.5 rounded border flex items-center justify-center ${isVisible ? 'bg-terminal-blue border-terminal-blue' : 'border-terminal-border'}`}
-                >
-                  {isVisible && <span className="text-white text-[9px]">✓</span>}
-                </div>
-                <span className={isVisible ? 'text-terminal-text' : 'text-terminal-muted'}>{widget.label}</span>
-              </button>
-            )
-          })}
+          {Object.entries(widgetRegistry).map(([type, entry]) => (
+            <button
+              key={type}
+              onClick={() => addWidgetInstance(type)}
+              className="w-full flex items-center gap-2 px-3 py-2 text-xs hover:bg-terminal-border/30 text-left"
+            >
+              <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: entry.accent }} />
+              <span className="flex-1 text-terminal-text">{entry.defaultTitle}</span>
+              <span className="text-terminal-muted text-[10px]">+</span>
+            </button>
+          ))}
         </div>
       )}
     </div>

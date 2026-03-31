@@ -1,4 +1,5 @@
 import type { ResponsiveLayouts } from 'react-grid-layout'
+import { INITIAL_LAYOUT } from '../widgets/defaults'
 
 export type LayoutItem = {
   i: string
@@ -10,49 +11,25 @@ export type LayoutItem = {
   minH?: number
 }
 
-export const defaultLayouts: ResponsiveLayouts = {
-  lg: [
-    { i: 'summary', x: 0, y: 0, w: 7, h: 6, minW: 4, minH: 4 },
-    { i: 'news', x: 7, y: 0, w: 5, h: 3, minW: 3, minH: 3 },
-    { i: 'allocation', x: 7, y: 3, w: 5, h: 3, minW: 3, minH: 3 },
-  ],
-  md: [
-    { i: 'summary', x: 0, y: 0, w: 6, h: 6, minW: 4, minH: 4 },
-    { i: 'news', x: 6, y: 0, w: 4, h: 3, minW: 3, minH: 3 },
-    { i: 'allocation', x: 6, y: 3, w: 4, h: 3, minW: 3, minH: 3 },
-  ],
-  sm: [
-    { i: 'summary', x: 0, y: 0, w: 6, h: 5, minW: 2, minH: 4 },
-    { i: 'news', x: 0, y: 5, w: 6, h: 3, minW: 2, minH: 3 },
-    { i: 'allocation', x: 0, y: 8, w: 6, h: 3, minW: 2, minH: 3 },
-  ],
-}
-
-export function getMinSizes(id: string) {
-  const isSummary = id === 'summary'
-  return { minW: isSummary ? 4 : 3, minH: isSummary ? 4 : 3 }
-}
+// Re-export from widget defaults (instance-ID keyed)
+export const defaultLayouts: ResponsiveLayouts = INITIAL_LAYOUT
 
 export function ensureMinSizes(layouts: ResponsiveLayouts): ResponsiveLayouts {
   const result: ResponsiveLayouts = {}
   for (const [bp, items] of Object.entries(layouts)) {
     result[bp] = (items as LayoutItem[]).map((item) => {
-      const { minW, minH } = getMinSizes(item.i)
+      const minW = item.minW ?? 3
+      const minH = item.minH ?? 3
       return {
         ...item,
         w: Math.max(item.w, minW),
         h: Math.max(item.h, minH),
-        minW: item.minW ?? minW,
-        minH: item.minH ?? minH,
+        minW,
+        minH,
       }
     })
   }
   return result
-}
-
-export function getDefaultItemForWidget(id: string): LayoutItem {
-  const lgItem = (defaultLayouts.lg as LayoutItem[]).find((d) => d.i === id)
-  return lgItem ?? { i: id, x: 0, y: 0, w: 5, h: 3, ...getMinSizes(id) }
 }
 
 const BREAKPOINT_COLS: Record<string, number> = { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }
@@ -93,15 +70,36 @@ export function injectWidgetIntoLayouts(
   currentLayouts: ResponsiveLayouts,
   id: string,
   savedItem: LayoutItem | null,
+  minSize: { minW: number; minH: number } = { minW: 3, minH: 3 },
 ): ResponsiveLayouts {
   const result: ResponsiveLayouts = {}
   for (const [bp, items] of Object.entries(currentLayouts)) {
     const filtered = (items as LayoutItem[]).filter((item) => item.i !== id)
-    const { minW, minH } = getMinSizes(id)
-    const ref = savedItem ?? getDefaultItemForWidget(id)
+    const ref = savedItem ?? { i: id, x: 0, y: 0, w: 5, h: 3, ...minSize }
     const cols = BREAKPOINT_COLS[bp] ?? 12
     const { x, y } = findAvailablePosition(filtered, ref.w, ref.h, cols)
-    result[bp] = [...filtered, { i: id, x, y, w: ref.w, h: ref.h, minW, minH }]
+    result[bp] = [...filtered, { i: id, x, y, w: ref.w, h: ref.h, ...minSize }]
+  }
+  return result
+}
+
+/** Create layout entries for a brand-new widget instance across all breakpoints */
+export function createLayoutsForNewInstance(
+  instanceId: string,
+  defaultSize: Record<string, { w: number; h: number }>,
+  minSize: { minW: number; minH: number },
+  currentLayouts: ResponsiveLayouts,
+): ResponsiveLayouts {
+  const result: ResponsiveLayouts = {}
+  for (const [bp, items] of Object.entries(currentLayouts)) {
+    const existing = items as LayoutItem[]
+    const size = defaultSize[bp] ?? defaultSize.lg ?? { w: 5, h: 3 }
+    const cols = BREAKPOINT_COLS[bp] ?? 12
+    const { x, y } = findAvailablePosition(existing, size.w, size.h, cols)
+    result[bp] = [
+      ...existing,
+      { i: instanceId, x, y, w: size.w, h: size.h, ...minSize },
+    ]
   }
   return result
 }
