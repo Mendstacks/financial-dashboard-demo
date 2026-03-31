@@ -2,6 +2,13 @@
 
 Bloomberg-style multi-portfolio management dashboard built with React, TypeScript, and Electron.
 
+## Live Demo
+https://financial-dashboard-demo-eight.vercel.app/
+
+## Desktop Builds
+- [Mac ARM Architecture (DMG)](https://drive.google.com/drive/folders/1PL2lSUDSIyzpdDtMGDO9MEePlgD8BHHO?usp=sharing)
+- [Windows (EXE)](https://drive.google.com/drive/folders/1CnpS5IbreoUXfHZVXJ5IiEReGfqyQ9zr?usp=sharing)
+
 ## Table of Contents
 
 - [Prerequisites](#prerequisites)
@@ -11,6 +18,7 @@ Bloomberg-style multi-portfolio management dashboard built with React, TypeScrip
 - [Tech Stack](#tech-stack)
 - [Features](#features)
 - [Project Structure](#project-structure)
+- [Screenshot/gif](#screenshotgif)
 
 ## Prerequisites
 
@@ -105,3 +113,7 @@ electron/
   main.ts            Electron main process
   preload.ts         Secure context bridge
 ```
+
+## Screenshot/gif
+![gif](https://github.com/user-attachments/assets/b31c50c5-f019-4756-affe-c528da9ed60a)
+
